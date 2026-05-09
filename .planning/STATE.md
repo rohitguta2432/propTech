@@ -19,7 +19,7 @@
 - Backend: FastAPI on Vercel (project `propcheck-api`). Python 3.11.
 - Frontend: Next.js 14 on Vercel (project `propcheck-app`).
 - Database: Supabase Postgres (Singapore, Session pooler). 8 tables migrated, 400+ locality_prices rows seeded.
-- LLM parsing fallback: Gemma 4 31B via OpenRouter free tier — `app/integrations/llm_parser.py`. Gated on `OPENROUTER_API_KEY` (no-op when unset). Used only to fill gaps in regex-parsed listing fields; never participates in scoring.
+- LLM parsing fallback: Gemma 4 31B via OpenRouter free tier — `app/integrations/llm_parser.py`. **`OPENROUTER_API_KEY` set in Vercel (production + development) on 2026-05-09 and verified live**: Gemma 4 31B correctly parses ₹1.2 Cr → 12000000 on test HTML. Used only to fill gaps in regex-parsed listing fields; never participates in scoring. Note: free-tier Gemma can be intermittently rate-limited upstream by Google AI Studio — failures are silent (regex result returned unchanged), so the system never breaks.
 - Auth: none at MVP.
 - Tests: 88/88 pass via pytest. GitHub Actions CI on push/PR.
 
