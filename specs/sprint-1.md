@@ -32,11 +32,14 @@ That's the whole sprint. Everything else (web UI, extension, WhatsApp) is layere
 - **Done when**: `uvicorn app.main:app --reload` starts and `curl localhost:8000/healthz` returns 200.
 
 ### Day 2 — Postgres + migrations
-- [ ] Set up Supabase project (free tier).
-- [ ] Install Alembic, write first migration creating all 7 tables from `database.md`.
-- [ ] `app/db/session.py` for SQLAlchemy session.
-- [ ] `app/models/db.py` — SQLAlchemy ORM mappings.
-- **Done when**: `alembic upgrade head` succeeds against the Supabase DB.
+- [ ] Set up Supabase project (free tier). **← BLOCKED ON FOUNDER**
+- [x] Install Alembic + SQLAlchemy + psycopg2-binary.
+- [x] First migration creating all 7 tables — `migrations/versions/2026_05_09_0001_initial_schema.py`.
+- [x] `app/db/session.py` for SQLAlchemy engine + session factory (lazy, doesn't crash without DATABASE_URL).
+- [x] `app/db/base.py` declarative Base.
+- [x] `app/models/db.py` — SQLAlchemy ORM mappings (all 7 tables).
+- [x] Verified: `Base.metadata` registers all 7 tables, `alembic history` resolves the head revision.
+- **Done when**: `alembic upgrade head` succeeds against the Supabase DB. Pending DATABASE_URL in `.env`.
 
 ### Day 3 — `/v1/check` skeleton
 - [ ] Pydantic request/response schemas matching `api.md`.
