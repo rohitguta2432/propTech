@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "mode": "yolo",
+  "planning": {
+    "commit_docs": true,
+    "search_gitignored": false
+  },
+  "model": {
+    "profile": "balanced"
+  },
+  "agents": {
+    "researcher": false,
+    "plan_checker": false,
+    "verifier": true
+  },
+  "notes": "Bootstrapped manually on 2026-05-09 from existing specs/, README.md, and 90-day-plan.md. Full ingest-docs workflow couldn't run because gsd-doc-classifier / gsd-doc-synthesizer / gsd-roadmapper sub-agent types aren't dispatchable in this environment — only generic Agent types are. Planning artifacts are kept in sync with specs/ rather than replacing it."
+}
