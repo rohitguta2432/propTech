@@ -25,6 +25,7 @@ Paste any portal listing URL → 0–100 Trust Score in 30 seconds → explainab
 - **Backend**: FastAPI (Python 3.11) on Vercel @vercel/python. Will migrate to Railway when scraping needs >10s.
 - **Frontend**: Next.js 14 (App Router) on Vercel.
 - **Database**: Supabase Postgres (ap-southeast-1, Session pooler — IPv4-friendly + supports prepared statements).
+- **LLM parsing fallback**: Gemma 4 31B via OpenRouter free tier ($0/M tokens). Regex-first, LLM-only-when-gaps. Gated on `OPENROUTER_API_KEY` env var (no-op when unset). The LLM **never participates in scoring** — it only fills gaps in the upstream parsing layer. See `specs/integrations.md` § 4.
 - **Auth**: None at MVP. API keys (`pk_*` / `bk_*`) for Pro/B2B come later.
 - **Domains**: `propcheck.rohitraj.tech` (web), `api.rohitraj.tech` (api). Move to a real domain after brand lock.
 - **Design system**: Anthropic hybrid — Poppins headings, Lora body, JetBrains Mono for data, Anthropic Orange for CTAs, traffic-light functional palette for safety scores.

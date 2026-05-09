@@ -12,6 +12,25 @@ How each portal scraper extracts a normalized listing from a URL. Shared interfa
 - Send a realistic `User-Agent` and `Accept-Language` so we don't get insta-blocked.
 - Honour 5s timeout; if exceeded, return a `ScrapedListing` with whatever's set + log the timeout.
 
+### LLM parsing fallback (regex-first, LLM-only-when-gaps)
+
+After the per-portal regex/BS4 parser runs, scrapers call
+`app.integrations.llm_parser.enrich(html, listing)` which is a no-op unless:
+
+1. `OPENROUTER_API_KEY` is set in the environment, AND
+2. At least 2 of `{price_inr, area_sqft, bhk, locality}` are still `None` after regex.
+
+When both conditions hold, the raw HTML (truncated to 12K chars) is sent to
+**Gemma 4 31B via OpenRouter free tier** with a strict-JSON prompt. The
+returned fields **only fill gaps** — regex always wins on overlap. Failures
+(network, timeout, malformed JSON, refusal) silently return the regex-only
+listing. The LLM never participates in scoring (see `specs/integrations.md`
+section 4 for the full contract).
+
+This keeps two principles intact:
+- **Scoring stays rules-based and auditable** (`specs/trust-engine.md`).
+- **Parsing degrades gracefully**: regex-only is the floor, LLM is upside.
+
 ---
 
 ## Common interface

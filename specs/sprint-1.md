@@ -59,14 +59,15 @@ That's the whole sprint. Everything else (web UI, extension, WhatsApp) is layere
 - [x] Persistence: every check writes to the `checks` table with the parsed portal, listing_id, IP, user-agent, and source surface.
 - **Verified**: tested all 4 portals locally; cache hits on repeat calls. Live in production at `api.rohitraj.tech/v1/check`.
 
-### Day 5 — Magicbricks HTML scrape ✅ (and 99acres + scrapers spec)
+### Day 5 — Magicbricks HTML scrape ✅ (and 99acres + scrapers spec + LLM fallback)
 - [x] **No Playwright** at MVP (Vercel 10s ceiling) — using `httpx` + `BeautifulSoup4` with 6s timeout.
 - [x] `specs/scrapers.md` written — common `ScrapedListing` shape, `PortalScraper` protocol.
 - [x] `app/scrapers/{base,router}.py` — registry, defaults (User-Agent, timeout).
 - [x] `app/scrapers/magicbricks.py` — fixture-tested (6/6 pass), registers itself with router.
 - [x] `app/scrapers/acres99.py` — fixture-tested (9/9 pass), registers itself with router.
 - [x] 24h DB cache wired through `/v1/check` (re-uses Day 4 work).
-- **Limitation**: Vercel egress IPs are likely blocked by portal anti-bot. When that happens, scrapers return empty `ScrapedListing` → `/v1/check` falls back to the stub. Migrate to Railway + residential proxies later.
+- [x] **LLM parsing fallback** (`app/integrations/llm_parser.py`) — Gemma 4 31B via OpenRouter free tier. Regex-first, LLM-second. Gated on `OPENROUTER_API_KEY` (no-op when unset). 10/10 mocked tests. See `specs/integrations.md` § 4.
+- **Limitation**: Vercel egress IPs are likely blocked by portal anti-bot. When that happens, scrapers return empty `ScrapedListing` → `/v1/check` falls back to the stub. Migrate to Railway + residential proxies later. (LLM fallback can't recover from a blocked fetch — it needs at least *some* HTML.)
 
 ### Day 6 — Karnataka RERA integration ✅
 - [x] `specs/integrations.md` written.

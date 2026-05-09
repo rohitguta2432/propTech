@@ -96,9 +96,10 @@ System design for the property listing trust layer. One backend, three surfaces.
 |---|---|
 | `api/` | FastAPI HTTP server. Endpoints: `/v1/check`, `/v1/check/{id}`, `/v1/portals`, `/v1/feedback`, `/v1/whatsapp/webhook` |
 | `workers/` | Async job runners (RQ on Redis). Heavy lifting: scraping, image search, RERA fetch |
-| `engine/` | Trust scoring rules. v1 = pure Python rules, no ML |
-| `parsers/` | Per-portal HTML parsers. One file per portal. Easy to add new ones |
-| `integrations/` | Wrappers for RERA, Google Vision, property tax, Twilio |
+| `engine/` | Trust scoring rules. v1 = pure Python rules, no ML in scoring (the LLM only runs in the parsing layer below). |
+| `parsers/` | Per-portal URL parsers (regex). One file per portal. Easy to add new ones |
+| `scrapers/` | Per-portal HTML scrapers (regex/BS4-first). LLM fallback fires only when regex leaves key fields blank. |
+| `integrations/` | Wrappers for RERA, locality prices, image hash, **LLM parsing fallback (Gemma 4 31B via OpenRouter)**, Twilio |
 
 ### Data
 
@@ -126,6 +127,7 @@ System design for the property listing trust layer. One backend, three surfaces.
 
 | Service | Why | Cost (est.) |
 |---|---|---|
+| **OpenRouter (Gemma 4 31B free tier)** | **LLM parsing fallback when scraper regex leaves key fields blank** | **Free ($0/M tokens) — gated on `OPENROUTER_API_KEY` env var; no-op when unset** |
 | Karnataka RERA portal | Project verification | Free (web scrape) |
 | Google Vision API | Reverse image search | $1.50 / 1K queries |
 | Twilio WhatsApp Business | Bot transport | $0.005 / message |
@@ -283,7 +285,7 @@ Domain + SaaS one-time: ~₹10K. **Total 90-day infra: ~₹1.5L.** Reduce proxy 
 - No mobile app — web works fine on phone
 - No user accounts — stateless free tier
 - No payments — wait until Pro launch in Month 4
-- No ML models — rules engine is more explainable + debuggable
+- **No ML in the scoring engine** — rules engine is more explainable + debuggable (the LLM-based parsing fallback in `app/integrations/llm_parser.py` is a separate concern: it only fills gaps when regex parsers can't extract a field; scoring stays rules-based and auditable)
 - No multi-language UI — English only at launch
 - No commercial / land / plot support — residential only
 - No portal-specific dashboards — just the score

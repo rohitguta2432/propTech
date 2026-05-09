@@ -28,6 +28,7 @@
 - **Domain naming** — `propcheck.in` mentioned aspirationally in some specs; actual deployment uses `propcheck.rohitraj.tech` and `api.rohitraj.tech`. Resolution: locked decision in `PROJECT.md` is the deployed subdomains; aspirational `.in` domain is an open decision.
 - **Backend hosting** — multiple specs mention Railway as the long-term host; current deployment is Vercel @vercel/python. Resolution: locked decision is Vercel-for-now-Railway-later, with Phase 7 covering the migration.
 - **Trust engine signal count** — spec says 11 signals; trust engine v1 wires 6. Resolution: requirements list all 11 with status (DONE / pending) so nothing is lost; trust-engine.md remains the source of truth for signal definitions.
+- **AI vs rules-based** — marketing copy on `web/` says "AI-powered" while `specs/trust-engine.md` says "rules-only in scoring". Resolution: this isn't actually a contradiction — the LLM (Gemma 4 31B via OpenRouter) operates only in the upstream parsing layer (`app/integrations/llm_parser.py`) to fill gaps when regex fails. Scoring remains rules-based + auditable. Both statements are honest; the marketing "AI-powered" claim is genuinely backed by the parsing-layer LLM.
 
 ## No conflicts
 

@@ -32,6 +32,7 @@ Source: synthesised from `README.md`, `specs/*.md`, `90-day-plan.md`, `landing-p
 - **REQ-021** — Maharashtra RERA verification with 7-day cache. (Phase 2 ✅)
 - **REQ-022** — Locality price index for 7 cities (Bangalore + Mumbai + Delhi + Gurgaon + Noida + Pune + Hyderabad), ~400 rows. (Phase 2 ✅)
 - **REQ-023** — Perceptual image hash + Hamming-distance dedup. (Phase 2 ✅)
+- **REQ-024** — LLM parsing fallback (Gemma 4 31B via OpenRouter free tier) fills `ScrapedListing` fields when regex leaves ≥2 of {price_inr, area_sqft, bhk, locality} blank. Regex always wins on overlap; LLM only fills gaps. Gated on `OPENROUTER_API_KEY` env var; no-op when unset. **The LLM never participates in trust scoring** — it operates upstream of the scoring engine. (Phase 2 ✅, 10/10 tests)
 
 ### B2B API
 

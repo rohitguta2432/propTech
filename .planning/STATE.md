@@ -19,8 +19,9 @@
 - Backend: FastAPI on Vercel (project `propcheck-api`). Python 3.11.
 - Frontend: Next.js 14 on Vercel (project `propcheck-app`).
 - Database: Supabase Postgres (Singapore, Session pooler). 8 tables migrated, 400+ locality_prices rows seeded.
+- LLM parsing fallback: Gemma 4 31B via OpenRouter free tier — `app/integrations/llm_parser.py`. Gated on `OPENROUTER_API_KEY` (no-op when unset). Used only to fill gaps in regex-parsed listing fields; never participates in scoring.
 - Auth: none at MVP.
-- Tests: 78/78 pass via pytest. GitHub Actions CI on push/PR.
+- Tests: 88/88 pass via pytest. GitHub Actions CI on push/PR.
 
 ## Phase status
 

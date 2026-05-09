@@ -10,6 +10,7 @@ How the 0–100 trust score is computed. Pure rules-based at MVP. Explainable, d
 2. **Conservative**: when a signal is unclear, we don't dock points. False alarms erode trust faster than missed scams.
 3. **Source-cited**: every flag carries a source URL or system name. Buyers can verify our claim.
 4. **Composable**: signals are independent. Adding/removing one doesn't require redesigning the engine.
+5. **Rules-only in scoring.** No ML / no LLM contributes a score delta. The LLM that does live in the system (`app/integrations/llm_parser.py`) only fills gaps in the upstream parsing layer — it never decides whether a listing is risky. This separation is deliberate: parsing can degrade gracefully, scoring must remain auditable.
 
 ---
 
@@ -196,7 +197,7 @@ Low-confidence flags get smaller `score_delta` and softer language ("may be", "a
 
 ## What v1 explicitly does NOT do
 
-- No ML model. No embeddings.
+- **No ML / LLM in the scoring engine.** No embeddings, no learned classifiers, no LLM judge. (An LLM IS used in `app/integrations/llm_parser.py` to fill gaps in raw-HTML field extraction when regex fails — that's a parsing concern, not a scoring concern, and the engine treats the resulting fields exactly like regex-extracted ones.)
 - No "trust scoring" of brokers or owners by name (legal risk).
 - No financial risk assessment.
 - No permanent blacklist of any seller.
