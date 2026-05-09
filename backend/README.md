@@ -58,6 +58,29 @@ backend/
 └── Dockerfile               ← For Railway
 ```
 
+## Database
+
+Vercel Postgres (Neon) is wired up. Run migrations with:
+
+```bash
+.venv\Scripts\activate
+alembic upgrade head    # apply all pending
+alembic current         # show current revision
+alembic downgrade -1    # roll back one
+```
+
+A snapshot of the current schema (offline-generated) lives at
+`migrations/initial_schema.sql` for reference / fresh setups.
+
+### DNS note (JioFiber users)
+
+JioFiber's router DNS does not resolve `*.neon.tech`. The repo works around
+this by setting `PGHOSTADDR` in `.env` (libpq uses it for the actual TCP
+connect, while the URL `host` is still used for SSL/SNI).
+
+**Permanent fix**: change your Wi-Fi adapter DNS to `8.8.8.8` / `1.1.1.1`
+and remove `PGHOSTADDR` from `.env`.
+
 ## Specs
 
 Read these before adding code:

@@ -6,10 +6,15 @@ so autogenerate works against ORM models in app.models.db.
 from logging.config import fileConfig
 
 from alembic import context
+from dotenv import load_dotenv
 from sqlalchemy import engine_from_config, pool
 
-from app.config import settings
-from app.db.base import Base
+# Export everything in .env into os.environ so libpq can pick up PGHOSTADDR
+# and similar variables (workaround for JioFiber DNS not resolving *.neon.tech).
+load_dotenv()
+
+from app.config import settings  # noqa: E402  -- after load_dotenv
+from app.db.base import Base  # noqa: E402
 
 # Make sure all ORM classes are imported so they register on Base.metadata.
 import app.models.db  # noqa: F401

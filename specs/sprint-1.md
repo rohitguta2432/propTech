@@ -31,15 +31,16 @@ That's the whole sprint. Everything else (web UI, extension, WhatsApp) is layere
 - [x] `.env.example`, `.gitignore`, `Dockerfile`
 - **Done when**: `uvicorn app.main:app --reload` starts and `curl localhost:8000/healthz` returns 200.
 
-### Day 2 — Postgres + migrations
-- [ ] Set up Supabase project (free tier). **← BLOCKED ON FOUNDER**
+### Day 2 — Postgres + migrations ✅
+- [x] **Vercel Postgres (Neon) provisioned** — `propcheck-db` connected to Vercel project `propcheck-app`.
 - [x] Install Alembic + SQLAlchemy + psycopg2-binary.
 - [x] First migration creating all 7 tables — `migrations/versions/2026_05_09_0001_initial_schema.py`.
-- [x] `app/db/session.py` for SQLAlchemy engine + session factory (lazy, doesn't crash without DATABASE_URL).
+- [x] `app/db/session.py` for SQLAlchemy engine + session factory (lazy).
 - [x] `app/db/base.py` declarative Base.
 - [x] `app/models/db.py` — SQLAlchemy ORM mappings (all 7 tables).
-- [x] Verified: `Base.metadata` registers all 7 tables, `alembic history` resolves the head revision.
-- **Done when**: `alembic upgrade head` succeeds against the Supabase DB. Pending DATABASE_URL in `.env`.
+- [x] **`alembic upgrade head` succeeded against Vercel Postgres**. 8 tables exist (7 app + alembic_version).
+- [x] env.py loads `.env` via python-dotenv so `PGHOSTADDR` workaround for JioFiber DNS sticks.
+- **Verified**: `alembic current` returns `0001_initial_schema (head)`.
 
 ### Day 3 — `/v1/check` skeleton
 - [ ] Pydantic request/response schemas matching `api.md`.
