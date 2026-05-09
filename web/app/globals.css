@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body {
+  background: #faf9f5;
+  color: #141413;
+  font-family: var(--font-lora), Georgia, serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, .heading {
+  font-family: var(--font-poppins), Arial, sans-serif;
+}
+
+.mono {
+  font-family: var(--font-mono), monospace;
+}
+
+.grad-safe   { background: linear-gradient(135deg, #ECFDF5, #D1FAE5); border: 2px solid #10B981; }
+.grad-amber  { background: linear-gradient(135deg, #FFFBEB, #FEF3C7); border: 2px solid #F59E0B; }
+.grad-risky  { background: linear-gradient(135deg, #FEF2F2, #FEE2E2); border: 2px solid #EF4444; }
+
+.shadow-card  { box-shadow: 0 1px 3px rgba(20,20,19,0.08), 0 1px 2px rgba(20,20,19,0.04); }
+.shadow-modal { box-shadow: 0 20px 25px rgba(20,20,19,0.10); }

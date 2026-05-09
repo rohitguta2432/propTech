@@ -50,12 +50,14 @@ That's the whole sprint. Everything else (web UI, extension, WhatsApp) is layere
 - [ ] Add structured logging (structlog).
 - **Done when**: curl test above returns the mock JSON.
 
-### Day 4 — URL parser + portal detection
-- [ ] `app/parsers/base.py` with `BaseParser` protocol.
-- [ ] `app/parsers/magicbricks.py` — given URL, extract `listing_id`. Return error for any other domain.
-- [ ] `app/parsers/router.py` — pick the right parser by URL.
-- [ ] Tests in `tests/test_parsers.py` covering 5 real Magicbricks URLs.
-- **Done when**: `/v1/check` correctly identifies portal + listing_id from a real URL.
+### Day 4 — URL parser + portal detection ✅
+- [x] `app/parsers/base.py` with `PortalParser` protocol.
+- [x] **All 4 portals** parsed (not just Magicbricks): `magicbricks.py`, `acres99.py`, `housing.py`, `nobroker.py`.
+- [x] `app/parsers/router.py` — picks the right parser by URL regex; falls back to URL hash if listing_id can't be extracted.
+- [x] `/v1/check` integrates the router — invalid URLs now return `INVALID_URL` 400 with the list of supported portals.
+- [x] Cache lookup added: same URL within 24h returns the cached row from Postgres (`cache_hit: true`).
+- [x] Persistence: every check writes to the `checks` table with the parsed portal, listing_id, IP, user-agent, and source surface.
+- **Verified**: tested all 4 portals locally; cache hits on repeat calls. Live in production at `api.rohitraj.tech/v1/check`.
 
 ### Day 5 — Magicbricks HTML scrape
 - [ ] Set up Playwright (with `playwright install chromium`).
@@ -104,12 +106,20 @@ That's the whole sprint. Everything else (web UI, extension, WhatsApp) is layere
 - [ ] Email notification (Resend) to founder on each new flag.
 - **Done when**: a feedback POST creates a row + sends an email.
 
-### Day 13 — Deploy to Railway
-- [ ] Railway project, link to GitHub.
-- [ ] Env vars set (DB url, Redis url, secrets).
-- [ ] Auto-deploy on push to `main`.
-- [ ] Custom domain `api.propcheck.in`.
-- **Done when**: `curl https://api.propcheck.in/healthz` returns 200.
+### Day 13 — Deploy ✅ (changed: Vercel Python serverless instead of Railway)
+- [x] **Backend deployed to Vercel** as `propcheck-api` (Python @vercel/python runtime, ASGI app).
+- [x] Env vars set: `DATABASE_URL` for production, preview, development.
+- [x] Auto-deploy on push to `main` (Vercel git integration).
+- [x] **Custom domain `api.rohitraj.tech`** attached.
+- [x] **Frontend deployed to Vercel** as `propcheck-app` (Next.js 14 + Tailwind, all design tokens from mockup applied).
+- [x] **Custom domain `propcheck.rohitraj.tech`** attached.
+- [x] `NEXT_PUBLIC_API_BASE=https://api.rohitraj.tech` baked into the frontend build.
+- **Why not Railway**: User had Vercel set up already; Vercel Python serverless ships fine for the MVP (mock scoring). When Day 5+ adds Playwright scraping with multi-second runs, we'll move backend to Railway/Fly.
+- **Verified**:
+  - `curl https://api.rohitraj.tech/healthz` → 200
+  - `curl -X POST https://api.rohitraj.tech/v1/check ...` → full report, persisted to Supabase
+  - `curl https://propcheck.rohitraj.tech` → 200, served Next.js app
+  - Page bundle embeds `api.rohitraj.tech` as the API base.
 
 ### Day 14 — End-to-end manual test
 - [ ] Hand-pick 10 real Magicbricks Bangalore listings (mix of clean + suspicious).
