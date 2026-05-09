@@ -15,6 +15,7 @@ from sqlalchemy.orm import Session
 
 from app.db.session import get_db
 from app.engine.trust_score import compute_score, compute_stub
+from app.middleware.rate_limit import cost_func, limiter
 from app.models.db import Check
 from app.models.schemas import CheckRequest, CheckResponse
 from app.parsers.router import route, supported_portals
@@ -28,6 +29,7 @@ router = APIRouter()
 
 
 @router.post("/check", response_model=CheckResponse)
+@limiter.limit("10/minute", cost=cost_func)
 async def submit_check(
     payload: CheckRequest,
     request: Request,

@@ -11,6 +11,7 @@ Technical specifications for the PropCheck product. Read these before writing an
 | [trust-engine.md](trust-engine.md) | Scoring rules v1 — 11 signals, deltas, aggregation formula, calibration targets |
 | [scrapers.md](scrapers.md) | Per-portal scraping spec — `ScrapedListing` shape, what fields to extract, fixture-based testing |
 | [integrations.md](integrations.md) | External data sources — Karnataka RERA, locality price index, image hash |
+| [rate-limiting.md](rate-limiting.md) | Per-IP / per-key rate limits, 429 contract, slowapi-based implementation |
 | [sprint-1.md](sprint-1.md) | First 14-day development plan with daily tasks and definition of done |
 
 ## Conventions

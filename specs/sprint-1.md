@@ -83,11 +83,13 @@ That's the whole sprint. Everything else (web UI, extension, WhatsApp) is layere
 - [x] `_is_empty()` fallback: if scraper returned literally nothing, `/v1/check` falls back to `compute_stub` so the UI never breaks.
 - [x] Local smoke test: Whitefield 3BHK example produces `score=80, label=safe` with PRICE_BELOW_MARKET (-26%) + RERA_MISSING flags. Pulls real avg ₹11,200/sqft from the seeded `locality_prices` table.
 
-### Day 8 — Image hash + duplicate detection
-- [ ] `app/integrations/image_hash.py` — perceptual hash via `imagehash` Python lib.
-- [ ] Insert hashes into `images` table on each scrape.
-- [ ] `STOLEN_PHOTOS` signal — query for matching phashes across other properties.
-- **Done when**: duplicate-image detection works against test data.
+### Day 8 — Image hash + duplicate detection ✅
+- [x] `app/integrations/image_hash.py`: `phash_url`, `find_matches`, `hash_listing`, `hamming` helpers.
+- [x] httpx download with 5MB cap + streaming early-cancel; never raises (all failures → None).
+- [x] Signed/unsigned 64-bit fold for Postgres BIGINT compatibility.
+- [x] Idempotent `hash_listing` (skips already-hashed URLs per property).
+- [x] 20/20 tests pass: hamming, phash success/404/oversize/non-image/timeout, find_matches threshold + property exclusion, hash_listing persistence + idempotency.
+- **Pending integration**: trust engine doesn't yet emit `STOLEN_PHOTOS` flag. Wires up after we have real images flowing from a working scrape.
 
 ### Day 9 — Locality price benchmark ✅
 - [x] Curated CSV seed (instead of scrape) at `backend/seeds/locality_prices_bangalore.csv` — 20 Bangalore localities × {1,2,3,4} BHK = 80 rows.
@@ -102,11 +104,12 @@ That's the whole sprint. Everything else (web UI, extension, WhatsApp) is layere
 - [ ] `cache_hit: true` field returned correctly.
 - **Done when**: second curl on same URL completes in <500ms.
 
-### Day 11 — Rate limiting
-- [ ] `slowapi` integration.
-- [ ] 10 checks/min/IP for free tier.
-- [ ] `429` response with proper headers.
-- **Done when**: 11th request in 60s returns 429.
+### Day 11 — Rate limiting ✅
+- [x] `specs/rate-limiting.md` written — 10/min/IP anon, pro/B2B key bypass, 429 response shape, headers.
+- [x] `app/middleware/rate_limit.py`: `Limiter` with key_func that recognises `X-API-Key: pk_*`/`bk_*` headers; `rate_limit_exception_handler` renders the spec'd JSON body + Retry-After.
+- [x] Wired into `app/main.py` (state.limiter + exception handler + SlowAPIMiddleware) and `app/api/check.py` (`@limiter.limit("10/minute", cost=cost_func)`).
+- [x] Pro key bypass via `cost_func` returning 0 for `pk_*`/`bk_*` keys (zero-cost = never blocks); future per-tier limits drop in without API change.
+- [x] 5/5 tests pass: under-limit, over-limit, healthz exempt, pro key bypass, 429 response shape (full JSON + headers).
 
 ### Day 12 — Feedback endpoint
 - [ ] `POST /v1/feedback` writes to `feedback` table.
