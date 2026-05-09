@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+
+import { Footer } from "../components/Footer";
+import { Nav } from "../components/Nav";
 import { ApiError, CheckResponse, inrFormat, submitCheck } from "../lib/api";
 
 export default function HomePage() {
@@ -41,25 +44,6 @@ export default function HomePage() {
       <HowItWorks />
       <Footer />
     </main>
-  );
-}
-
-function Nav() {
-  return (
-    <header className="sticky top-0 z-50 bg-cream/85 backdrop-blur border-b border-subtle">
-      <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-ink flex items-center justify-center">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d97757" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
-          </div>
-          <span className="heading font-bold text-lg tracking-tight">PropCheck</span>
-        </div>
-        <div className="hidden sm:flex items-center gap-5 text-sm">
-          <a className="text-ink/70 hover:text-ink heading">How it works</a>
-          <a className="text-ink/70 hover:text-ink heading">For lenders</a>
-        </div>
-      </div>
-    </header>
   );
 }
 
@@ -291,11 +275,3 @@ function Step({ n, title, body }: { n: string; title: string; body: string }) {
   );
 }
 
-function Footer() {
-  return (
-    <footer className="border-t border-subtle py-10 text-center text-sm text-ink/60">
-      <div className="font-body">PropCheck · 2026 · Made in Bangalore for Indian buyers.</div>
-      <div className="mt-2 font-body">We don&apos;t sell listings. We don&apos;t take broker commissions.</div>
-    </footer>
-  );
-}
