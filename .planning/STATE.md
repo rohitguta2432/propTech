@@ -33,7 +33,7 @@
 | 5 Feedback + observability | ✅ feedback done; observability pending Sentry/PostHog signup |
 | 6 Calibration | ⏳ blocked on user-supplied real URLs |
 | 7 Real scrapes from production | ⏳ blocked on Railway/Fly migration |
-| 8 Chrome extension | 🚧 planned |
+| 8 Chrome extension | ✅ DONE — built locally, awaiting Chrome Web Store publish ($5 one-time) |
 | 9 WhatsApp bot | 🚧 planned |
 | 10 Auth + Pro/B2B keys | 🚧 planned |
 | 11 Multi-state RERA + cities | 🚧 partial (Karnataka + Maharashtra done) |

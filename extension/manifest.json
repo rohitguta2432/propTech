@@ -1,0 +1,52 @@
+{
+  "manifest_version": 3,
+  "name": "PropCheck — Property Trust Score",
+  "version": "0.1.0",
+  "description": "0-100 trust score on every Indian property listing. Free, neutral, built for buyers.",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "48": "icons/icon-48.png"
+    }
+  },
+  "background": {
+    "service_worker": "background/worker.js",
+    "type": "module"
+  },
+  "permissions": ["storage", "activeTab"],
+  "host_permissions": [
+    "https://*.magicbricks.com/*",
+    "https://*.99acres.com/*",
+    "https://*.housing.com/*",
+    "https://*.nobroker.in/*",
+    "https://api.rohitraj.tech/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://*.magicbricks.com/*"],
+      "js": ["content/magicbricks.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://*.99acres.com/*"],
+      "js": ["content/acres99.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://*.housing.com/*"],
+      "js": ["content/housing.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://*.nobroker.in/*"],
+      "js": ["content/nobroker.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

@@ -11,7 +11,7 @@ Phases for **Milestone v0.1 — MVP launch**.
 | 5 | Feedback + observability | ✅ DONE (feedback) / ⏳ partial | `POST /v1/feedback` shipped. Sentry + PostHog wiring documented in `docs/MONITORING.md`; awaiting account signup. |
 | 6 | Calibration | ⏳ BLOCKED | Sprint 1 Day 14. Need 10 hand-picked real listing URLs (5 known-clean, 5 known-suspicious) to score and tune deltas. |
 | 7 | Real scrapes from production | ⏳ BLOCKED | Vercel egress blocked by portal anti-bot. Migrate backend to Railway / Fly + add residential proxy (Bright Data) OR proxy via Firecrawl. Needs Railway account. |
-| 8 | Chrome extension | 🚧 PLANNED | The viral surface. Spec already in `specs/design.md`. Build: Manifest V3 content script overlaying score badge on portal listing cards. Chrome Web Store listing. ~2–3 days. |
+| 8 | Chrome extension | ✅ DONE | Manifest V3, 4 content scripts (Magicbricks, 99acres, Housing, NoBroker), Shadow-DOM-isolated badge + sidebar, 24h chrome.storage cache, popup with recent-checks + paste-to-check. ~2,650 LOC across `extension/`. Build via `npm install && npm run build`; load `dist/` via `chrome://extensions/`. Release ZIP: `npm run build:zip` (33.6 KB). Chrome Web Store publish is the only remaining step ($5 one-time fee). |
 | 9 | WhatsApp bot | 🚧 PLANNED | Forward-a-link flow via Twilio. ~1–2 days. |
 | 10 | Auth + Pro/B2B keys | 🚧 PLANNED | Stripe-backed signup, key issuance, per-tier metering. ~3–5 days. |
 | 11 | Multi-state RERA + cities | 🚧 PARTIAL / IN-PROGRESS | Karnataka + Maharashtra live. Add Delhi (RERA Delhi), Haryana (HARERA), Tamil Nadu, Telangana. Each ~1 day. |

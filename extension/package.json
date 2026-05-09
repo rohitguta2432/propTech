@@ -1,0 +1,20 @@
+{
+  "name": "propcheck-extension",
+  "version": "0.1.0",
+  "description": "PropCheck Chrome extension — 0–100 trust score on every Indian property listing.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "clean": "node scripts/clean.mjs",
+    "build:icons": "node scripts/generate-icons.mjs",
+    "build": "npm run clean && npm run build:icons && node esbuild.config.mjs",
+    "dev": "node esbuild.config.mjs --watch",
+    "build:zip": "npm run build && node scripts/zip.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/chrome": "0.0.268",
+    "esbuild": "0.24.0",
+    "typescript": "5.6.3"
+  }
+}
