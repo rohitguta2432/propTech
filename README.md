@@ -74,15 +74,41 @@ The dataset. Every check builds a scam-pattern database — stolen images, repea
 
 ## Files in this folder
 
-- `README.md` — this doc
-- `landing-page.md` — copy ready to paste into a Framer / Webflow / Next.js landing page
-- `positioning.md` — name candidates, tagline options, brand voice
-- `90-day-plan.md` — week-by-week MVP path
+```
+proptech/
+├── README.md             ← this doc (product idea + status)
+├── 90-day-plan.md        ← week-by-week MVP path
+├── landing-page.md       ← copy ready to paste into Framer / Webflow / Next.js
+├── positioning.md        ← name candidates, taglines, brand voice
+├── mockup/               ← interactive HTML design preview (open index.html)
+├── specs/                ← technical specs — read before coding
+│   ├── README.md
+│   ├── architecture.md   ← system design, stack, deployment, cost
+│   ├── design.md         ← visual identity, screens, components, wireframes
+│   ├── database.md       ← Postgres schema with CREATE statements
+│   ├── api.md            ← full API contract — endpoints, errors, rate limits
+│   ├── trust-engine.md   ← scoring rules v1 (11 signals)
+│   └── sprint-1.md       ← first 14-day development plan
+└── backend/              ← FastAPI service (runnable today)
+    ├── README.md         ← how to run locally
+    ├── app/              ← source
+    ├── requirements.txt
+    ├── Dockerfile
+    └── .env.example
+```
+
+**Reading order for new contributors:**
+1. This README (product + status)
+2. `specs/architecture.md` (the system)
+3. `specs/api.md` + `specs/database.md` + `specs/trust-engine.md` (the building blocks)
+4. `specs/sprint-1.md` (what to build first)
+5. `backend/README.md` (how to run)
 
 ---
 
 ## Status
 
 - **Date**: 2026-05-09
-- **Stage**: Idea locked. Brand TBD. Funding model TBD.
-- **Next decision**: name + domain, team model (solo vs co-founder vs hire), funding (bootstrap vs angel-first).
+- **Stage**: Specs complete. Backend scaffold running locally on port 8000 with stubbed `/v1/check`. Sprint 1 ready to start.
+- **Next decision**: name + domain, team model, funding model.
+- **Next code task**: Sprint 1 Day 2 — Supabase setup + Alembic migrations (see `specs/sprint-1.md`).

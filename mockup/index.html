@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PropCheck — Design Preview (Anthropic hybrid)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Anthropic brand fonts: Poppins (headings) + Lora (body) + JetBrains Mono (data) -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Lora:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          heading: ['Poppins', 'Arial', 'sans-serif'],
+          body: ['Lora', 'Georgia', 'serif'],
+          mono: ['JetBrains Mono', 'monospace'],
+        },
+        colors: {
+          // Anthropic brand
+          ink:     '#141413',  // primary text + dark backgrounds
+          cream:   '#faf9f5',  // page background
+          midgray: '#b0aea5',  // secondary text
+          subtle:  '#e8e6dc',  // subtle surfaces
+          orange:  '#d97757',  // primary accent — CTAs, links, brand
+          ablue:   '#6a9bcc',  // secondary accent
+          agreen:  '#788c5d',  // tertiary accent
+          // Functional traffic-light colors — kept pure for safety signalling
+          safe:    '#10B981',
+          amber:   '#F59E0B',
+          risky:   '#EF4444',
+        },
+      },
+    },
+  };
+</script>
+<style>
+  body {
+    font-family: 'Lora', Georgia, serif;
+    background: #faf9f5;
+    color: #141413;
+  }
+  h1, h2, h3, h4, .heading { font-family: 'Poppins', Arial, sans-serif; }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  /* Score badge gradients — kept functional (traffic light) */
+  .grad-safe   { background: linear-gradient(135deg, #ECFDF5, #D1FAE5); border: 2px solid #10B981; }
+  .grad-amber  { background: linear-gradient(135deg, #FFFBEB, #FEF3C7); border: 2px solid #F59E0B; }
+  .grad-risky  { background: linear-gradient(135deg, #FEF2F2, #FEE2E2); border: 2px solid #EF4444; }
+
+  .shadow-card  { box-shadow: 0 1px 3px rgba(20,20,19,0.08), 0 1px 2px rgba(20,20,19,0.04); }
+  .shadow-modal { box-shadow: 0 20px 25px rgba(20,20,19,0.10); }
+
+  .section-divider {
+    border-top: 1px dashed #b0aea5;
+    margin: 96px 0 64px;
+    position: relative;
+  }
+  .section-divider span {
+    position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+    background: #faf9f5; padding: 0 16px; color: #b0aea5;
+    font-family: 'Poppins', Arial, sans-serif;
+    font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 600;
+  }
+
+  /* Cards on cream */
+  .surface { background: #ffffff; border: 1px solid #e8e6dc; }
+  .surface-subtle { background: #faf9f5; border: 1px solid #e8e6dc; }
+</style>
+</head>
+<body class="antialiased">
+
+<!-- ============== TOP NAV ============== -->
+<header class="sticky top-0 z-50 bg-cream/85 backdrop-blur border-b border-subtle">
+  <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <div class="w-8 h-8 rounded-lg bg-ink flex items-center justify-center">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d97757" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/>
+        </svg>
+      </div>
+      <span class="heading font-bold text-lg tracking-tight">PropCheck</span>
+    </div>
+    <div class="flex items-center gap-5 text-sm">
+      <a class="text-ink/70 hover:text-ink heading">How it works</a>
+      <a class="text-ink/70 hover:text-ink heading">For lenders</a>
+      <button class="bg-ink text-cream px-4 py-2 rounded-full text-sm font-medium hover:bg-ink/90 heading">
+        Add to Chrome
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ============== HERO ============== -->
+<section class="max-w-4xl mx-auto px-6 pt-24 pb-16 text-center">
+  <div class="inline-flex items-center gap-2 surface-subtle rounded-full px-3 py-1 text-xs heading font-medium mb-6">
+    <span class="w-1.5 h-1.5 rounded-full bg-orange animate-pulse"></span>
+    <span class="text-ink/70">Bangalore launch · May 2026</span>
+  </div>
+  <h1 class="heading text-5xl sm:text-6xl font-extrabold tracking-tight leading-[1.05] text-ink">
+    Don't get scammed on<br>your next property.
+  </h1>
+  <p class="mt-7 text-lg text-ink/70 max-w-2xl mx-auto leading-relaxed">
+    Verify any Magicbricks, 99acres, Housing or NoBroker listing in 30 seconds.
+    Free. Neutral. Built for Indian buyers.
+  </p>
+
+  <!-- Paste input -->
+  <div class="mt-10 max-w-xl mx-auto">
+    <div class="flex gap-2 p-2 surface rounded-2xl shadow-card">
+      <input type="text" placeholder="Paste a property listing link…"
+        class="flex-1 px-3 py-2 text-sm bg-transparent outline-none font-body">
+      <button class="bg-orange hover:bg-orange/90 text-white heading font-semibold text-sm px-5 py-2 rounded-xl">
+        Check →
+      </button>
+    </div>
+    <p class="mt-3 text-xs text-ink/60">
+      Free forever for buyers. We don't sell listings. We don't take broker commissions.
+    </p>
+  </div>
+</section>
+
+<!-- ============== TRUST SCORE BADGE — ALL THREE STATES ============== -->
+<section class="max-w-6xl mx-auto px-6">
+  <div class="section-divider"><span>The Trust Score Badge</span></div>
+
+  <p class="text-center text-ink/70 max-w-2xl mx-auto mb-12 italic">
+    Score colors stay functional — green / amber / red — because safety signals must never be ambiguous.
+    The brand wraps around them.
+  </p>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <!-- SAFE -->
+    <div class="surface rounded-2xl p-8 shadow-card">
+      <div class="grad-safe rounded-2xl p-8 flex flex-col items-center justify-center aspect-square">
+        <div class="mono text-7xl font-bold text-emerald-700">87</div>
+        <div class="mono text-xs text-emerald-600 mt-1">/ 100</div>
+        <div class="mt-4 heading font-bold text-emerald-700 tracking-wide">SAFE</div>
+        <div class="text-xs text-ink/60 mt-2 flex items-center gap-1 font-body">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+          2 green flags
+        </div>
+      </div>
+      <div class="mt-6">
+        <div class="heading font-semibold text-ink mb-1">Score 70–100</div>
+        <div class="text-sm text-ink/70 leading-relaxed">
+          Clean listing. RERA verified. Fair price. Owner identity matched. Visit with confidence.
+        </div>
+      </div>
+    </div>
+
+    <!-- AMBER -->
+    <div class="surface rounded-2xl p-8 shadow-card">
+      <div class="grad-amber rounded-2xl p-8 flex flex-col items-center justify-center aspect-square">
+        <div class="mono text-7xl font-bold text-amber-700">62</div>
+        <div class="mono text-xs text-amber-600 mt-1">/ 100</div>
+        <div class="mt-4 heading font-bold text-amber-700 tracking-wide">CAUTION</div>
+        <div class="text-xs text-ink/60 mt-2 flex items-center gap-1 font-body">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M5.07 19h13.86a2 2 0 001.74-3L13.74 4a2 2 0 00-3.48 0L3.34 16a2 2 0 001.73 3z"/></svg>
+          2 yellow flags
+        </div>
+      </div>
+      <div class="mt-6">
+        <div class="heading font-semibold text-ink mb-1">Score 40–69</div>
+        <div class="text-sm text-ink/70 leading-relaxed">
+          Mixed signals. Listing duplicated, or builder has minor complaints. Verify before paying.
+        </div>
+      </div>
+    </div>
+
+    <!-- RISKY -->
+    <div class="surface rounded-2xl p-8 shadow-card">
+      <div class="grad-risky rounded-2xl p-8 flex flex-col items-center justify-center aspect-square">
+        <div class="mono text-7xl font-bold text-red-700">42</div>
+        <div class="mono text-xs text-red-600 mt-1">/ 100</div>
+        <div class="mt-4 heading font-bold text-red-700 tracking-wide">RISKY</div>
+        <div class="text-xs text-ink/60 mt-2 flex items-center gap-1 font-body">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+          4 red flags
+        </div>
+      </div>
+      <div class="mt-6">
+        <div class="heading font-semibold text-ink mb-1">Score 0–39</div>
+        <div class="text-sm text-ink/70 leading-relaxed">
+          High-risk signals. Stolen photos, fake RERA, suspicious price, or repeat-offender broker.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== FULL REPORT PAGE MOCKUP ============== -->
+<section class="max-w-4xl mx-auto px-6">
+  <div class="section-divider"><span>The Report Page</span></div>
+
+  <div class="surface rounded-2xl shadow-card overflow-hidden">
+    <!-- top header -->
+    <div class="px-8 py-5 border-b border-subtle flex items-center justify-between">
+      <div class="flex items-center gap-2 text-sm text-ink/60">
+        <span class="mono text-xs bg-subtle px-2 py-1 rounded">chk_a3f2…</span>
+        <span class="font-body">checked 12 seconds ago</span>
+      </div>
+      <div class="flex items-center gap-2 text-sm heading">
+        <button class="px-3 py-1.5 rounded-full border border-subtle hover:bg-subtle">Share</button>
+        <button class="px-3 py-1.5 rounded-full border border-subtle hover:bg-subtle">Save PDF</button>
+        <button class="px-3 py-1.5 rounded-full bg-orange text-white">New check</button>
+      </div>
+    </div>
+
+    <!-- score hero -->
+    <div class="grad-risky px-8 py-10 flex flex-col md:flex-row items-center gap-8">
+      <div class="rounded-2xl px-8 py-6 flex flex-col items-center justify-center min-w-[200px] bg-white/70 backdrop-blur">
+        <div class="mono text-7xl font-bold text-red-700">42</div>
+        <div class="mono text-xs text-red-600 mt-1">/ 100</div>
+        <div class="mt-3 heading font-bold text-red-700 tracking-wide text-sm">RISKY</div>
+      </div>
+      <div class="flex-1 text-center md:text-left">
+        <div class="heading text-2xl font-bold text-ink">This listing has 4 high-risk signals.</div>
+        <div class="text-ink/80 mt-2 leading-relaxed">Read the red flags below before you pay anyone.</div>
+      </div>
+    </div>
+
+    <!-- property summary -->
+    <div class="px-8 py-6 border-b border-subtle">
+      <div class="text-xs text-ink/50 uppercase tracking-wider heading font-semibold">Property</div>
+      <div class="mt-2 heading text-xl font-bold text-ink">3 BHK Apartment in Whitefield, Bangalore</div>
+      <div class="mt-1 text-sm text-ink/70">
+        <span class="mono font-semibold">₹1.20 Cr</span> ·
+        <span class="mono">1,450 sqft</span> ·
+        <span class="mono">₹8,275/sqft</span>
+      </div>
+      <div class="mt-2 text-xs text-ink/60">
+        Source: Magicbricks · Listing ID 12345 · 87 days old ·
+        <a class="text-orange underline">View original listing →</a>
+      </div>
+    </div>
+
+    <!-- red flags -->
+    <div class="px-8 py-6 border-b border-subtle">
+      <div class="text-xs text-ink/50 uppercase tracking-wider heading font-semibold mb-4">Red Flags (4)</div>
+      <div class="space-y-3">
+
+        <div class="border border-red-200 bg-red-50/60 rounded-xl p-4 flex gap-3">
+          <div class="text-risky mt-0.5">⚠</div>
+          <div class="flex-1">
+            <div class="flex items-center justify-between">
+              <div class="heading font-semibold text-ink">Duplicate listings detected</div>
+              <span class="text-xs heading font-bold text-red-700 bg-red-100 px-2 py-0.5 rounded">HIGH RISK</span>
+            </div>
+            <div class="text-sm text-ink/80 mt-1 leading-relaxed">
+              Listed 4 times across 3 portals at 3 different prices: ₹1.2 Cr, ₹1.35 Cr, ₹1.1 Cr.
+              Different brokers, same flat.
+            </div>
+            <div class="text-xs text-ink/60 mt-2">
+              Sources: <a class="underline">Magicbricks</a> · <a class="underline">99acres</a> · <a class="underline">Housing.com</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="border border-red-200 bg-red-50/60 rounded-xl p-4 flex gap-3">
+          <div class="text-risky mt-0.5">⚠</div>
+          <div class="flex-1">
+            <div class="flex items-center justify-between">
+              <div class="heading font-semibold text-ink">Photos likely stolen</div>
+              <span class="text-xs heading font-bold text-red-700 bg-red-100 px-2 py-0.5 rounded">HIGH RISK</span>
+            </div>
+            <div class="text-sm text-ink/80 mt-1 leading-relaxed">
+              Listing photos appear on 7 other unrelated listings across India.
+            </div>
+            <div class="text-xs text-ink/60 mt-2">
+              Source: Google Vision reverse image search
+            </div>
+          </div>
+        </div>
+
+        <div class="border border-red-200 bg-red-50/60 rounded-xl p-4 flex gap-3">
+          <div class="text-risky mt-0.5">⚠</div>
+          <div class="flex-1">
+            <div class="flex items-center justify-between">
+              <div class="heading font-semibold text-ink">RERA mismatch</div>
+              <span class="text-xs heading font-bold text-red-700 bg-red-100 px-2 py-0.5 rounded">HIGH RISK</span>
+            </div>
+            <div class="text-sm text-ink/80 mt-1 leading-relaxed">
+              The RERA number on this listing does not match any Karnataka RERA project record.
+            </div>
+            <div class="text-xs text-ink/60 mt-2">
+              Source: Karnataka RERA portal (rera.karnataka.gov.in)
+            </div>
+          </div>
+        </div>
+
+        <div class="border border-amber-200 bg-amber-50/60 rounded-xl p-4 flex gap-3">
+          <div class="text-amber mt-0.5">⚠</div>
+          <div class="flex-1">
+            <div class="flex items-center justify-between">
+              <div class="heading font-semibold text-ink">Builder has 6 complaints</div>
+              <span class="text-xs heading font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded">MEDIUM</span>
+            </div>
+            <div class="text-sm text-ink/80 mt-1 leading-relaxed">
+              "ABC Developers" has 6 open complaints + 2 reported delays in past 3 years.
+            </div>
+            <div class="text-xs text-ink/60 mt-2">
+              Source: Karnataka RERA complaint registry
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- checklist -->
+    <div class="px-8 py-6 border-b border-subtle">
+      <div class="text-xs text-ink/50 uppercase tracking-wider heading font-semibold mb-4">Pre-Purchase Checklist</div>
+      <div class="space-y-2 text-sm">
+        <label class="flex items-start gap-2 cursor-pointer">
+          <input type="checkbox" class="mt-0.5 w-4 h-4 rounded border-subtle accent-orange">
+          <span class="text-ink/85">Visit the property in person before paying any token</span>
+        </label>
+        <label class="flex items-start gap-2 cursor-pointer">
+          <input type="checkbox" class="mt-0.5 w-4 h-4 rounded border-subtle accent-orange">
+          <span class="text-ink/85">Ask for the sale deed</span>
+        </label>
+        <label class="flex items-start gap-2 cursor-pointer">
+          <input type="checkbox" class="mt-0.5 w-4 h-4 rounded border-subtle accent-orange">
+          <span class="text-ink/85">Verify property tax record at the municipal portal</span>
+        </label>
+        <label class="flex items-start gap-2 cursor-pointer">
+          <input type="checkbox" class="mt-0.5 w-4 h-4 rounded border-subtle accent-orange">
+          <span class="text-ink/85">Never pay token over UPI to a personal account</span>
+        </label>
+        <label class="flex items-start gap-2 cursor-pointer">
+          <input type="checkbox" class="mt-0.5 w-4 h-4 rounded border-subtle accent-orange">
+          <span class="text-ink/85">Verify owner identity with Aadhaar + utility bill</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- verifications -->
+    <div class="px-8 py-6 border-b border-subtle">
+      <div class="text-xs text-ink/50 uppercase tracking-wider heading font-semibold mb-4">Verification Details</div>
+      <table class="w-full text-sm">
+        <tbody class="divide-y divide-subtle">
+          <tr class="grid grid-cols-2 py-2">
+            <td class="text-ink/70">RERA status</td>
+            <td class="text-right"><span class="text-red-700 heading font-semibold mono">MISMATCH</span></td>
+          </tr>
+          <tr class="grid grid-cols-2 py-2">
+            <td class="text-ink/70">Listing age</td>
+            <td class="text-right mono">87 days</td>
+          </tr>
+          <tr class="grid grid-cols-2 py-2">
+            <td class="text-ink/70">Locality avg price</td>
+            <td class="text-right mono">₹10,600 / sqft <span class="text-red-700">(this is 22% below)</span></td>
+          </tr>
+          <tr class="grid grid-cols-2 py-2">
+            <td class="text-ink/70">Image matches</td>
+            <td class="text-right mono">7 other listings</td>
+          </tr>
+          <tr class="grid grid-cols-2 py-2">
+            <td class="text-ink/70">Builder complaints</td>
+            <td class="text-right mono">6</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- upsell to landeed -->
+    <div class="px-8 py-6 surface-subtle">
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+        <div>
+          <div class="heading font-semibold text-ink">Want full title verification?</div>
+          <div class="text-sm text-ink/70 mt-0.5">Encumbrance certificate + ownership chain via our partner Landeed</div>
+        </div>
+        <button class="bg-ink text-cream px-4 py-2 rounded-full text-sm heading font-medium hover:bg-ink/90">
+          ₹999 deep report →
+        </button>
+      </div>
+    </div>
+
+    <!-- feedback -->
+    <div class="px-8 py-4 text-center text-sm text-ink/60 font-body">
+      Was this score wrong? <a class="text-orange underline">Flag for review</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============== CHROME EXTENSION OVERLAY ============== -->
+<section class="max-w-6xl mx-auto px-6">
+  <div class="section-divider"><span>Chrome Extension Overlay</span></div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+
+    <!-- Listing card with badge overlay -->
+    <div>
+      <div class="text-sm text-ink/60 mb-3 font-body italic">
+        Badge mode — appears on every listing card while browsing the major portals
+      </div>
+      <div class="surface rounded-2xl shadow-card overflow-hidden relative">
+        <div class="h-44 bg-gradient-to-br from-midgray to-ink/40 flex items-center justify-center text-white text-sm font-body italic">
+          [ listing photo ]
+        </div>
+        <!-- floating PropCheck badge -->
+        <div class="absolute top-3 right-3 grad-risky rounded-xl px-3 py-2 flex items-center gap-2 shadow-modal">
+          <div class="w-6 h-6 rounded-md bg-ink flex items-center justify-center">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#d97757" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+          </div>
+          <div class="leading-tight">
+            <div class="mono font-bold text-red-700 text-lg">42</div>
+            <div class="text-[10px] heading font-bold text-red-700">RISKY</div>
+          </div>
+        </div>
+
+        <div class="p-4">
+          <div class="heading font-semibold text-ink">3 BHK Whitefield</div>
+          <div class="text-sm text-ink/70 mt-0.5">₹1.2 Cr · 1,450 sqft · Magicbricks</div>
+          <div class="mt-3 text-xs text-ink/60">By: ABC Developers · Listed 87 days ago</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar mode -->
+    <div>
+      <div class="text-sm text-ink/60 mb-3 font-body italic">
+        Sidebar mode — slides in on the right when you open a listing detail page
+      </div>
+      <div class="surface rounded-2xl shadow-modal max-w-[360px]">
+        <div class="px-5 py-3 border-b border-subtle flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <div class="w-6 h-6 rounded-md bg-ink flex items-center justify-center">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#d97757" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+            </div>
+            <span class="heading font-semibold text-sm">PropCheck</span>
+          </div>
+          <button class="text-ink/40 hover:text-ink">✕</button>
+        </div>
+        <div class="px-5 py-5">
+          <div class="grad-risky rounded-xl p-5 flex flex-col items-center">
+            <div class="mono text-5xl font-bold text-red-700">42</div>
+            <div class="mono text-[10px] text-red-600 mt-0.5">/ 100</div>
+            <div class="mt-2 heading font-bold text-red-700 text-sm tracking-wide">RISKY</div>
+          </div>
+
+          <div class="mt-4 space-y-2 text-sm">
+            <div class="flex items-start gap-2 text-ink/85">
+              <span class="text-risky mt-0.5">⚠</span>
+              <span>Duplicate listings (4 across 3 portals)</span>
+            </div>
+            <div class="flex items-start gap-2 text-ink/85">
+              <span class="text-risky mt-0.5">⚠</span>
+              <span>Photos appear on 7 other listings</span>
+            </div>
+            <div class="flex items-start gap-2 text-ink/85">
+              <span class="text-risky mt-0.5">⚠</span>
+              <span>RERA number doesn't match Karnataka records</span>
+            </div>
+            <div class="flex items-start gap-2 text-ink/85">
+              <span class="text-amber mt-0.5">⚠</span>
+              <span>Builder has 6 open complaints</span>
+            </div>
+          </div>
+
+          <button class="mt-5 w-full bg-orange text-white py-2 rounded-xl heading font-semibold text-sm hover:bg-orange/90">
+            See full report →
+          </button>
+          <button class="mt-2 w-full border border-subtle text-ink/80 py-2 rounded-xl heading font-medium text-sm hover:bg-subtle">
+            Send to WhatsApp
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============== WHATSAPP ============== -->
+<section class="max-w-4xl mx-auto px-6">
+  <div class="section-divider"><span>WhatsApp Bot</span></div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+    <div>
+      <div class="text-sm text-ink/60 mb-3 font-body italic">
+        User forwards a listing link to PropCheck on WhatsApp →
+      </div>
+      <div class="bg-[#E5DDD5] p-6 rounded-2xl">
+        <!-- user message -->
+        <div class="flex justify-end mb-3">
+          <div class="bg-[#DCF8C6] rounded-lg rounded-br-none px-3 py-2 max-w-[80%] shadow-sm">
+            <div class="text-sm break-all font-body">https://www.magicbricks.com/propertyDetails/3-BHK-Apartment-FOR-Sale-Whitefield-Bangalore...</div>
+            <div class="text-[10px] text-ink/50 text-right mt-1 mono">11:42 AM ✓✓</div>
+          </div>
+        </div>
+        <!-- bot response -->
+        <div class="flex justify-start">
+          <div class="bg-white rounded-lg rounded-bl-none px-3 py-3 max-w-[85%] shadow-sm">
+            <div class="text-sm space-y-2 leading-relaxed font-body">
+              <div class="heading font-semibold">🔍 PropCheck — Trust Report</div>
+              <div><span class="font-semibold">Trust Score:</span> <span class="mono font-bold text-red-700">42 / 100</span> — <span class="heading font-bold text-red-700">RISKY</span></div>
+              <div>
+                <div class="heading font-semibold mt-2">Property</div>
+                3 BHK in Whitefield, Bangalore<br>
+                ₹1.20 Cr · 1,450 sqft · Magicbricks
+              </div>
+              <div>
+                <div class="heading font-semibold mt-2">Red flags (4):</div>
+                1. Listed 4× at different prices<br>
+                2. Photos on 7 other listings<br>
+                3. RERA number doesn't match<br>
+                4. Builder has 6 complaints
+              </div>
+              <div>
+                <div class="heading font-semibold mt-2">Before paying anyone:</div>
+                ☐ Visit in person<br>
+                ☐ Ask for sale deed<br>
+                ☐ Never pay token over UPI
+              </div>
+              <div class="mt-2 text-orange underline">propcheck.in/c/abc123</div>
+            </div>
+            <div class="text-[10px] text-ink/50 text-right mt-1 mono">11:42 AM</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-sm text-ink/80 leading-relaxed pt-12">
+      <div class="text-xs text-ink/50 uppercase tracking-wider heading font-semibold mb-3">Why WhatsApp matters</div>
+      <p class="mb-3">India is a WhatsApp-first country. Property scams happen in family group chats. Aunties forward links to nephews to "check please". The bot fits where the conversation already is — no app install, no signup.</p>
+      <p class="mb-3">Each report ends with a forward-friendly link, so one check converts into many.</p>
+      <p class="text-ink/60 italic">Distribution baked in. Free for users, ₹0.005 per message via Twilio.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============== COLOR + TYPE TOKENS ============== -->
+<section class="max-w-6xl mx-auto px-6">
+  <div class="section-divider"><span>Tokens — Anthropic hybrid</span></div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+    <div>
+      <div class="text-xs text-ink/50 uppercase tracking-wider heading font-semibold mb-4">Brand colors (Anthropic)</div>
+      <div class="space-y-3 text-sm">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-lg bg-ink"></div>
+          <div><div class="heading font-semibold">Ink</div><div class="mono text-xs text-ink/60">#141413 · primary text + dark surfaces</div></div>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-lg bg-cream border border-subtle"></div>
+          <div><div class="heading font-semibold">Cream</div><div class="mono text-xs text-ink/60">#faf9f5 · page background</div></div>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-lg bg-midgray"></div>
+          <div><div class="heading font-semibold">Mid Gray</div><div class="mono text-xs text-ink/60">#b0aea5 · secondary</div></div>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-lg bg-subtle"></div>
+          <div><div class="heading font-semibold">Subtle</div><div class="mono text-xs text-ink/60">#e8e6dc · subtle bg, borders</div></div>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-lg bg-orange"></div>
+          <div><div class="heading font-semibold">Orange (primary accent)</div><div class="mono text-xs text-ink/60">#d97757 · CTAs, links, brand</div></div>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-lg bg-ablue"></div>
+          <div><div class="heading font-semibold">Anthropic Blue</div><div class="mono text-xs text-ink/60">#6a9bcc · secondary accent</div></div>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-lg bg-agreen"></div>
+          <div><div class="heading font-semibold">Anthropic Green</div><div class="mono text-xs text-ink/60">#788c5d · tertiary accent</div></div>
+        </div>
+      </div>
+
+      <div class="text-xs text-ink/50 uppercase tracking-wider heading font-semibold mt-8 mb-4">Functional traffic-light (kept pure)</div>
+      <div class="space-y-3 text-sm">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-lg bg-safe"></div>
+          <div><div class="heading font-semibold">Safe Green</div><div class="mono text-xs text-ink/60">#10B981 · score 70+</div></div>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-lg bg-amber"></div>
+          <div><div class="heading font-semibold">Amber</div><div class="mono text-xs text-ink/60">#F59E0B · score 40–69</div></div>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-lg bg-risky"></div>
+          <div><div class="heading font-semibold">Risky Red</div><div class="mono text-xs text-ink/60">#EF4444 · score &lt;40</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="text-xs text-ink/50 uppercase tracking-wider heading font-semibold mb-4">Typography</div>
+      <div class="space-y-6">
+        <div>
+          <div class="text-xs text-ink/50 mono mb-1">Poppins · 48px extrabold · H1</div>
+          <div class="heading text-5xl font-extrabold tracking-tight">Don't get scammed.</div>
+        </div>
+        <div>
+          <div class="text-xs text-ink/50 mono mb-1">Poppins · 32px bold · H2</div>
+          <div class="heading text-3xl font-bold">Verify in 30 seconds.</div>
+        </div>
+        <div>
+          <div class="text-xs text-ink/50 mono mb-1">Lora · 16px regular · body</div>
+          <div class="text-base text-ink/85 leading-relaxed">
+            Free forever for Indian buyers and renters. We don't sell listings, we don't take broker commissions, we don't recommend anyone. Our money comes from banks who pay us to do the same check before approving home loans.
+          </div>
+        </div>
+        <div>
+          <div class="text-xs text-ink/50 mono mb-1">JetBrains Mono · 96px bold · score (data, not marketing)</div>
+          <div class="mono font-bold text-7xl text-red-700">42</div>
+        </div>
+        <div>
+          <div class="text-xs text-ink/50 mono mb-1">JetBrains Mono · 14px medium · numerical data</div>
+          <div class="mono text-sm">₹1,20,00,000 · 1,450 sqft · 87 days</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== HYBRID PRINCIPLE ============== -->
+<section class="max-w-3xl mx-auto px-6">
+  <div class="section-divider"><span>The hybrid principle</span></div>
+
+  <div class="surface rounded-2xl p-8 shadow-card">
+    <div class="heading text-2xl font-bold text-ink mb-3">Brand wraps. Function never bends.</div>
+    <p class="text-ink/80 leading-relaxed mb-3">
+      Anthropic's warm cream + Poppins + Lora set the tone — calm, considered, human, not a pushy real-estate brochure.
+      But where a user is being warned that they might lose ₹1,00,000, we keep the colours universal:
+      <span class="text-emerald-700 font-semibold">green</span> means safe,
+      <span class="text-amber-700 font-semibold">amber</span> means caution,
+      <span class="text-red-700 font-semibold">red</span> means risky.
+    </p>
+    <p class="text-ink/80 leading-relaxed">
+      Every other surface — buttons, links, headers, dividers — uses the
+      <span class="text-orange font-semibold">Anthropic Orange</span> as the primary accent.
+      Numbers stay in <span class="mono">JetBrains Mono</span> so they read as data, not marketing.
+    </p>
+  </div>
+</section>
+
+<!-- ============== FOOTER ============== -->
+<footer class="mt-32 border-t border-subtle py-10 text-center text-sm text-ink/60">
+  <div class="font-body">PropCheck — design preview · Anthropic hybrid · 2026-05-09</div>
+  <div class="mt-2 font-body">Made in Bangalore. Built for Indian buyers.</div>
+</footer>
+
+</body>
+</html>
