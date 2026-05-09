@@ -60,7 +60,15 @@ backend/
 
 ## Database
 
-Vercel Postgres (Neon) is wired up. Run migrations with:
+Supabase Postgres is wired up. Project `propcheck`, region `ap-southeast-1`
+(Singapore), connected via the **Session pooler**
+(`aws-1-ap-southeast-1.pooler.supabase.com:5432`).
+
+The Session pooler is chosen over Direct connection because:
+- **IPv4-friendly** — works on residential ISPs (JioFiber etc.) without IPv6.
+- **Supports prepared statements** — required for Alembic / SQLAlchemy.
+
+Run migrations with:
 
 ```bash
 .venv\Scripts\activate
@@ -72,14 +80,11 @@ alembic downgrade -1    # roll back one
 A snapshot of the current schema (offline-generated) lives at
 `migrations/initial_schema.sql` for reference / fresh setups.
 
-### DNS note (JioFiber users)
+`DATABASE_URL` in `.env` follows the standard libpq format:
+`postgresql://postgres.<project_ref>:<password>@aws-1-ap-southeast-1.pooler.supabase.com:5432/postgres`
 
-JioFiber's router DNS does not resolve `*.neon.tech`. The repo works around
-this by setting `PGHOSTADDR` in `.env` (libpq uses it for the actual TCP
-connect, while the URL `host` is still used for SSL/SNI).
-
-**Permanent fix**: change your Wi-Fi adapter DNS to `8.8.8.8` / `1.1.1.1`
-and remove `PGHOSTADDR` from `.env`.
+If you ever need to reset the DB password: Supabase dashboard →
+Project Settings → Database → Reset password. Update `.env` after.
 
 ## Specs
 

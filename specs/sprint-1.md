@@ -32,14 +32,16 @@ That's the whole sprint. Everything else (web UI, extension, WhatsApp) is layere
 - **Done when**: `uvicorn app.main:app --reload` starts and `curl localhost:8000/healthz` returns 200.
 
 ### Day 2 — Postgres + migrations ✅
-- [x] **Vercel Postgres (Neon) provisioned** — `propcheck-db` connected to Vercel project `propcheck-app`.
+- [x] **Supabase Postgres provisioned** — project `propcheck` in `rohitguta2432's Org`, region Asia-Pacific (Singapore, ap-southeast-1).
 - [x] Install Alembic + SQLAlchemy + psycopg2-binary.
 - [x] First migration creating all 7 tables — `migrations/versions/2026_05_09_0001_initial_schema.py`.
 - [x] `app/db/session.py` for SQLAlchemy engine + session factory (lazy).
 - [x] `app/db/base.py` declarative Base.
 - [x] `app/models/db.py` — SQLAlchemy ORM mappings (all 7 tables).
-- [x] **`alembic upgrade head` succeeded against Vercel Postgres**. 8 tables exist (7 app + alembic_version).
-- [x] env.py loads `.env` via python-dotenv so `PGHOSTADDR` workaround for JioFiber DNS sticks.
+- [x] **`alembic upgrade head` succeeded against Supabase**. 8 tables exist (7 app + alembic_version).
+- [x] Using Supabase **Session Pooler** at `aws-1-ap-southeast-1.pooler.supabase.com:5432` — IPv4-friendly, supports prepared statements (so Alembic just works), DNS resolves on JioFiber. **No PGHOSTADDR workaround needed.**
+- **Connection string** (in `backend/.env`, not committed): `postgresql://postgres.<project_ref>:<password>@aws-1-ap-southeast-1.pooler.supabase.com:5432/postgres`
+- **History note**: We initially provisioned Vercel Postgres (Neon) but JioFiber router DNS couldn't resolve `*.neon.tech`, so we switched to Supabase. Vercel Postgres has been deleted.
 - **Verified**: `alembic current` returns `0001_initial_schema (head)`.
 
 ### Day 3 — `/v1/check` skeleton
