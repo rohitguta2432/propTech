@@ -30,9 +30,37 @@ from app.scrapers import acres99, magicbricks
 from app.scrapers.base import ScrapedListing
 
 
-# Real URLs to calibrate against (post-Railway-migration when we can scrape).
-# Add 5 known-clean and 5 known-suspicious URLs here when you have them.
-REAL_URLS: list[str] = []
+# Real URLs to calibrate against. When the local IP can fetch the page, we
+# run the full pipeline. When it returns 403/404/406, we record the failure
+# (typical for magicbricks/99acres anti-bot). NoBroker is the most permissive
+# of the four portals as of 2026-05-09.
+REAL_URLS: list[str] = [
+    "https://www.nobroker.in/property/buy/2-bhk-apartment-for-sale-in-hebbal-kempapura-bangalore/8a9ff2828774022f01877418b77f0d88/detail",
+    "https://www.nobroker.in/property/2-bhk-apartment-for-rent-in-mathikere-bangalore-for-rs-16000/8a9f9a827cb6434f017cb6b617bb4f17/detail",
+    "https://www.nobroker.in/property/2-bhk-apartment-for-rent-in-electronic-city-bangalore-for-rs-35000/ff8081816dcac7d5016dcbb2fad8554e/detail",
+    "https://www.nobroker.in/property/2-bhk-apartment-for-rent-in-maragondanahalli--bangalore-for-rs-28000/8a9f8e438f848203018f84c09c68104e/detail",
+    "https://www.99acres.com/3-bhk-bedroom-independent-house-villa-for-sale-in-whitefield-bangalore-east-1372-sq-ft-spid-G90542764",
+    "https://www.99acres.com/3-bhk-bedroom-apartment-flat-for-sale-in-koramangala-bangalore-south-1815-sq-ft-spid-B70651770",
+    "https://www.99acres.com/2-bhk-bedroom-apartment-flat-for-rent-in-indiranagar-bangalore-south-1200-sq-ft-spid-R89140775",
+]
+
+
+# Realistic browser headers — boost our chances against anti-bot.
+_REAL_FETCH_HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+    ),
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "en-IN,en;q=0.9",
+    "Sec-Ch-Ua": '"Chromium";v="124", "Google Chrome";v="124"',
+    "Sec-Ch-Ua-Mobile": "?0",
+    "Sec-Ch-Ua-Platform": '"Windows"',
+    "Sec-Fetch-Dest": "document",
+    "Sec-Fetch-Mode": "navigate",
+    "Sec-Fetch-Site": "none",
+    "Upgrade-Insecure-Requests": "1",
+}
 
 
 # ---------------- helpers ----------------
@@ -121,6 +149,74 @@ async def run_one(label: str, listing: ScrapedListing, html: str | None = None) 
     }
 
 
+async def fetch_real(url: str) -> tuple[str | None, str | None]:
+    """Fetch a real listing URL with realistic headers. Return (html, error)."""
+    import httpx
+
+    try:
+        async with httpx.AsyncClient(
+            headers=_REAL_FETCH_HEADERS, timeout=10.0, follow_redirects=True
+        ) as client:
+            r = await client.get(url)
+            if r.status_code != 200 or len(r.text) < 2_000:
+                return None, f"HTTP {r.status_code}, {len(r.text)} bytes"
+            return r.text, None
+    except Exception as exc:
+        return None, f"{type(exc).__name__}: {exc}"
+
+
+async def run_real_url(url: str) -> dict:
+    """Fetch + LLM-parse + score a real listing URL."""
+    from app.parsers.router import route
+
+    portal_route = route(url)
+    portal = portal_route.portal if portal_route else "unknown"
+    listing_id = portal_route.listing_id if portal_route else url[-12:]
+
+    html, err = await fetch_real(url)
+    if err or not html:
+        return {
+            "label": f"REAL {portal}/{listing_id}",
+            "score": None,
+            "band": "FETCH_ERROR",
+            "summary": err,
+            "red_flags": [],
+            "green_flags": [],
+            "rera": None,
+            "price_delta_pct": None,
+            "locality_avg": None,
+            "url": url,
+        }
+
+    # Empty regex listing — let the LLM do the work.
+    listing = ScrapedListing(portal=portal, listing_id=listing_id, url=url)
+    listing = await llm_parser.enrich(html, listing)
+
+    sf = get_session_factory()
+    with sf() as db:
+        report = await compute_score(listing, url=url, db=db)
+    return {
+        "label": f"REAL {portal}/{listing_id}",
+        "score": report.score,
+        "band": report.label,
+        "summary": report.summary,
+        "red_flags": [(f.code, f.severity) for f in report.red_flags],
+        "green_flags": [f.code for f in report.green_flags],
+        "rera": report.verifications.rera,
+        "price_delta_pct": report.verifications.price_delta_pct,
+        "locality_avg": report.verifications.locality_avg_price_per_sqft,
+        "url": url,
+        "extracted": {
+            "title": listing.title,
+            "price_inr": listing.price_inr,
+            "bhk": listing.bhk,
+            "area_sqft": listing.area_sqft,
+            "locality": listing.locality,
+            "rera_id": listing.rera_id,
+        },
+    }
+
+
 async def main() -> int:
     rows: list[dict] = []
     fixtures = Path(__file__).parent.parent / "tests" / "fixtures"
@@ -136,6 +232,13 @@ async def main() -> int:
         listing = parse_with(acres99, html, "https://example.com/99-fix-1", "99-FIX-1")
         rows.append(await run_one("99acres-fixture", listing, html))
 
+    # --- real URLs (live fetch + LLM parse) ---
+    # Pace so we don't trip OpenRouter free-tier per-minute caps.
+    for i, url in enumerate(REAL_URLS):
+        if i > 0:
+            await asyncio.sleep(4)
+        rows.append(await run_real_url(url))
+
     # --- synthetic runs (no HTML, so no LLM call) ---
     for label, factory in [
         ("syn-clean (priced fairly, RERA, fresh)", synthetic_clean),
@@ -149,11 +252,12 @@ async def main() -> int:
     # --- pretty-print ---
     print()
     print("=" * 110)
-    print(f"{'LABEL':45s}  {'SCORE':>5s}  {'BAND':8s}  {'FLAGS':40s}")
+    print(f"{'LABEL':45s}  {'SCORE':>5s}  {'BAND':14s}  {'FLAGS':40s}")
     print("-" * 110)
     for r in rows:
         flags = ", ".join(f"{c}:{s}" for c, s in r["red_flags"]) or "-"
-        print(f"{r['label']:45s}  {r['score']:5d}  {r['band']:8s}  {flags[:40]}")
+        score = "-" if r["score"] is None else f"{r['score']:5d}"
+        print(f"{r['label']:45s}  {score:>5s}  {r['band']:14s}  {flags[:40]}")
     print("=" * 110)
     print()
     print("Per-row detail:")

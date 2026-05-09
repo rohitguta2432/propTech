@@ -28,11 +28,19 @@ from app.scrapers.base import ScrapedListing
 logger = logging.getLogger(__name__)
 
 # Truncate HTML before sending — keep cost predictable + within model context.
-_MAX_HTML_CHARS = 12_000
+_MAX_HTML_CHARS = 30_000
 
-# Strip script/style/nav before sending — they're noise.
+# Always-noise tags. We deliberately do NOT strip <script> here because
+# React SPAs (NoBroker, Housing) embed listing data as JSON inside scripts.
 _STRIP_TAGS_RE = re.compile(
-    r"<(script|style|noscript|svg|iframe)\b[^>]*>.*?</\1>",
+    r"<(style|noscript|svg|iframe)\b[^>]*>.*?</\1>",
+    re.IGNORECASE | re.DOTALL,
+)
+
+# Pull out script blocks that look like SPA hydration payloads — these contain
+# the actual listing data on React/Next.js sites.
+_HYDRATION_SCRIPT_RE = re.compile(
+    r"""<script[^>]*(?:id=["']__NEXT_DATA__["']|type=["']application/(?:ld\+)?json["'])[^>]*>(.*?)</script>""",
     re.IGNORECASE | re.DOTALL,
 )
 
@@ -65,9 +73,30 @@ def _needs_llm_help(listing: ScrapedListing) -> bool:
 
 
 def _trim_html(html: str) -> str:
-    cleaned = _STRIP_TAGS_RE.sub("", html or "")
+    if not html:
+        return ""
+    # First, harvest hydration script payloads (NEXT_DATA, ld+json) — these
+    # are gold-standard structured listing data on React SPAs.
+    hydration_blobs = "\n".join(
+        m.group(1).strip() for m in _HYDRATION_SCRIPT_RE.finditer(html)
+    )
+
+    # Then strip noise from the visual HTML.
+    cleaned = _STRIP_TAGS_RE.sub("", html)
+
+    # Bias the budget towards hydration blobs; pad with the visual HTML.
+    if hydration_blobs:
+        budget_blob = min(len(hydration_blobs), _MAX_HTML_CHARS - 5_000)
+        budget_visual = _MAX_HTML_CHARS - budget_blob
+        return (
+            "<!-- HYDRATION BLOBS (most reliable) -->\n"
+            + hydration_blobs[:budget_blob]
+            + "\n<!-- VISUAL HTML -->\n"
+            + cleaned[:budget_visual]
+        )
+
+    # No hydration blobs — just truncate the visual HTML.
     if len(cleaned) > _MAX_HTML_CHARS:
-        # Keep the first chunk — listings put the meta block early.
         cleaned = cleaned[:_MAX_HTML_CHARS]
     return cleaned
 
