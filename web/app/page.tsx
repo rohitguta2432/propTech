@@ -70,7 +70,7 @@ function Hero({
         Don&apos;t get scammed on<br/>your next property.
       </h1>
       <p className="mt-6 text-lg text-ink/70 max-w-2xl mx-auto leading-relaxed">
-        Verify any Magicbricks, 99acres, Housing or NoBroker listing in 30 seconds.
+        AI-powered trust score for any Magicbricks, 99acres, Housing or NoBroker listing in 30 seconds.
         Free. Neutral. Built for Indian buyers.
       </p>
 
@@ -255,11 +255,11 @@ function FlagCard({ flag }: { flag: import("../lib/api").Flag }) {
 function HowItWorks() {
   return (
     <section className="max-w-5xl mx-auto px-6 py-20">
-      <h2 className="heading text-3xl font-bold text-center mb-12">How it works</h2>
+      <h2 className="heading text-3xl font-bold text-center mb-12">How our AI works</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Step n="1" title="Paste any link" body="Magicbricks, 99acres, Housing or NoBroker. We read the listing — you don't have to copy anything." />
-        <Step n="2" title="We check 8 things" body="Listing age. Price vs locality. Duplicate count. RERA registration. Image reverse-search. Builder complaints. Owner-name match. Suspicious patterns." />
-        <Step n="3" title="30-second Trust Score" body="0–100 score. Clear red flags. A checklist of what to verify before paying anyone." />
+        <Step n="1" title="Paste any link" body="Magicbricks, 99acres, Housing or NoBroker. Our AI reads the listing — you don't have to copy anything." />
+        <Step n="2" title="AI checks 8 signals" body="Listing age. Price vs locality. Duplicate count. RERA registration. Image reverse-search. Builder complaints. Owner-name match. Suspicious patterns." />
+        <Step n="3" title="30-second Trust Score" body="0–100 AI-driven score. Clear red flags. A checklist of what to verify before paying anyone." />
       </div>
     </section>
   );

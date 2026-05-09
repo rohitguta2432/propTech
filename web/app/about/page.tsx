@@ -6,7 +6,7 @@ import { Nav } from "../../components/Nav";
 
 export const metadata: Metadata = {
   title: "About · PropCheck",
-  description: "Why PropCheck exists, who built it, and where we're going.",
+  description: "Why PropCheck exists, who built it, and where AI-powered property trust verification is going.",
 };
 
 export default function AboutPage() {
@@ -26,7 +26,7 @@ export default function AboutPage() {
           The portals can&apos;t fix this. They earn from every listing, real or fake. The buyer is on their own.
         </p>
         <p className="mt-4 text-lg text-ink/75 leading-relaxed">
-          PropCheck is the neutral check that should have been there all along.
+          PropCheck is the AI-powered neutral check that should have been there all along.
         </p>
       </section>
 
@@ -61,7 +61,7 @@ export default function AboutPage() {
       <section className="max-w-3xl mx-auto px-6 pb-20">
         <h2 className="heading text-3xl font-bold text-ink mb-6">How we make money</h2>
         <p className="text-ink/85 leading-relaxed">
-          Banks and NBFCs spend ₹2,000&ndash;5,000 and 3&ndash;7 days on property due-diligence per loan file. We do the listing-fraud + RERA slice in under one second. Pilot is free; production is ₹50&ndash;200 per check, sliding by volume.
+          Banks and NBFCs spend ₹2,000&ndash;5,000 and 3&ndash;7 days on property due-diligence per loan file. Our AI engine does the listing-fraud + RERA slice in under one second. Pilot is free; production is ₹50&ndash;200 per check, sliding by volume.
         </p>
         <p className="text-ink/85 leading-relaxed mt-3">
           That&apos;s it. We do not sell user data. We do not take broker commissions. We do not run ads. <Link href="/for-lenders" className="text-orange underline">More on the API →</Link>

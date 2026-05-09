@@ -5,9 +5,9 @@ import { Footer } from "../../components/Footer";
 import { Nav } from "../../components/Nav";
 
 export const metadata: Metadata = {
-  title: "How it works · PropCheck",
+  title: "How our AI works · PropCheck",
   description:
-    "How PropCheck verifies an Indian property listing in 30 seconds — the 8 signals we check, where the data comes from, and how to read the Trust Score.",
+    "How PropCheck's AI verifies an Indian property listing in 30 seconds — the 8 signals our engine checks, where the data comes from, and how to read the Trust Score.",
 };
 
 export default function HowItWorksPage() {
@@ -32,13 +32,13 @@ function Hero() {
   return (
     <section className="max-w-3xl mx-auto px-6 pt-20 pb-12 text-center">
       <div className="text-xs heading font-semibold uppercase tracking-wider text-ink/50 mb-4">
-        How it works
+        How our AI works
       </div>
       <h1 className="heading text-5xl sm:text-6xl font-extrabold tracking-tight leading-[1.05] text-ink">
-        Verify any listing in 30 seconds.
+        AI-powered listing verification in 30 seconds.
       </h1>
       <p className="mt-6 text-lg text-ink/70 leading-relaxed">
-        Paste a property listing link. We pull the page, cross-check eight signals against public records and our own dataset, and hand back a 0&ndash;100 Trust Score with the exact reasons. Free for buyers. Forever.
+        Paste a property listing link. Our AI pulls the page, cross-checks eight signals against public records and our own dataset, and hands back a 0&ndash;100 Trust Score with the exact reasons. Free for buyers. Forever.
       </p>
     </section>
   );
@@ -53,13 +53,13 @@ function ThirtySecondFlow() {
     },
     {
       n: "2",
-      title: "We pull the listing",
-      body: "Title, price, BHK, area, locality, RERA ID, builder. We cross-check all of it against Karnataka RERA, our locality price index, and our perceptual-image database.",
+      title: "Our AI cross-checks 8 signals",
+      body: "Title, price, BHK, area, locality, RERA ID, builder — extracted by our AI engine. Cross-checked against Karnataka RERA, our locality price index, and our perceptual-image database.",
     },
     {
       n: "3",
       title: "Score in 30 seconds",
-      body: "0–100 Trust Score with explainable red flags, green flags, and a pre-purchase checklist. No login required for the first five checks.",
+      body: "0–100 AI-driven Trust Score with explainable red flags, green flags, and a pre-purchase checklist. No login required for the first five checks.",
     },
   ];
   return (
@@ -138,9 +138,9 @@ function EightSignals() {
       : "text-ink/60 bg-subtle";
   return (
     <section className="max-w-6xl mx-auto px-6 pb-20">
-      <h2 className="heading text-3xl font-bold text-center mb-3">The eight signals</h2>
+      <h2 className="heading text-3xl font-bold text-center mb-3">The eight AI signals</h2>
       <p className="text-center text-ink/70 max-w-2xl mx-auto mb-12 italic">
-        Every flag has a public reason and a source. We never penalise without explaining why.
+        Our AI engine evaluates eight independent signals. Every flag has a public reason and a source. We never penalise without explaining why.
       </p>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {signals.map((s) => (

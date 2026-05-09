@@ -22,9 +22,9 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "PropCheck — Don't get scammed on your next property.",
+  title: "PropCheck — AI-powered property trust score for India",
   description:
-    "Verify any Magicbricks, 99acres, Housing or NoBroker listing in 30 seconds. Free, neutral, built for Indian buyers.",
+    "AI-powered trust verification for any Magicbricks, 99acres, Housing or NoBroker listing in 30 seconds. Free, neutral, built for Indian buyers.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

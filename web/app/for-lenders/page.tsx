@@ -5,9 +5,9 @@ import { Footer } from "../../components/Footer";
 import { Nav } from "../../components/Nav";
 
 export const metadata: Metadata = {
-  title: "For lenders · PropCheck API",
+  title: "For lenders · PropCheck AI API",
   description:
-    "PropCheck API for banks and NBFCs — sub-second property listing fraud + RERA verification before home-loan disbursement. Bangalore live; multi-state expansion in progress.",
+    "AI-powered property listing fraud + RERA verification API for banks and NBFCs — sub-second checks before home-loan disbursement. Bangalore live; multi-state expansion in progress.",
 };
 
 export default function ForLendersPage() {
@@ -33,14 +33,14 @@ function Hero() {
   return (
     <section className="max-w-3xl mx-auto px-6 pt-20 pb-12 text-center">
       <div className="text-xs heading font-semibold uppercase tracking-wider text-orange mb-4">
-        For lenders · API access
+        For lenders · AI API access
       </div>
       <h1 className="heading text-5xl sm:text-6xl font-extrabold tracking-tight leading-[1.05] text-ink">
-        Cleaner home loan diligence,<br/>in one API call.
+        AI-powered home loan diligence,<br/>in one API call.
       </h1>
       <p className="mt-6 text-lg text-ink/70 leading-relaxed">
         Banks and NBFCs spend &#8377;2,000&ndash;5,000 and 3&ndash;7 days on property due-diligence per file.
-        PropCheck does the listing-fraud and RERA slice in <strong className="text-ink">under one second</strong>, for a fraction of the cost.
+        PropCheck&apos;s AI engine does the listing-fraud and RERA slice in <strong className="text-ink">under one second</strong>, for a fraction of the cost.
       </p>
     </section>
   );
@@ -75,9 +75,9 @@ function Stat({ n, label, body }: { n: string; label: string; body: string }) {
 function Solution() {
   return (
     <section className="max-w-3xl mx-auto px-6 pb-20">
-      <h2 className="heading text-3xl font-bold text-center mb-3">One API call. Eight signals. Sub-second.</h2>
+      <h2 className="heading text-3xl font-bold text-center mb-3">One API call. Eight AI signals. Sub-second.</h2>
       <p className="text-center text-ink/70 leading-relaxed mb-10">
-        Drop PropCheck into your loan-origination flow before disbursement. Each call returns a structured report with eight independent signals — each backed by a citable source.
+        Drop PropCheck&apos;s AI engine into your loan-origination flow before disbursement. Each call returns a structured report with eight independent AI-driven signals — each backed by a citable source.
       </p>
       <div className="bg-white border border-subtle rounded-2xl p-6 shadow-card">
         <ul className="space-y-3 text-sm">
