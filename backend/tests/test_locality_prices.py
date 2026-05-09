@@ -124,6 +124,30 @@ def test_get_avg_price_case_insensitive(db):
     assert result_mixed == 11111
 
 
+def test_get_avg_price_works_for_all_cities(db):
+    """All seeded cities answer with a positive int for a known (locality, BHK).
+
+    Skips cleanly if the DB fixture decided the database wasn't reachable
+    (handled by the fixture itself).
+    """
+    # (city, locality, bhk) tuples we know are in the seeded CSVs.
+    cases = [
+        ("Bangalore", "Whitefield", 3),
+        ("Mumbai", "Bandra West", 2),
+        ("Delhi", "Vasant Kunj", 3),
+        ("Gurgaon", "Golf Course Road", 3),
+        ("Noida", "Sector 18", 2),
+        ("Pune", "Koregaon Park", 2),
+        ("Hyderabad", "HITEC City", 3),
+    ]
+    for city, locality, bhk in cases:
+        result = asyncio.run(get_avg_price(city, locality, bhk, db))
+        assert isinstance(result, int), (
+            f"{city}/{locality}/{bhk} returned {result!r}, expected int"
+        )
+        assert result > 0, f"{city}/{locality}/{bhk} returned non-positive {result}"
+
+
 def test_load_seed_csv_upserts(tmp_path, db):
     """A small CSV is loaded and the rows show up in the DB."""
     csv_path = tmp_path / "tiny.csv"

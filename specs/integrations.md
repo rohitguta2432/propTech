@@ -49,21 +49,31 @@ async def lookup(rera_id: str | None) -> RERAResult: ...
 
 Stores avg ₹/sqft per (city, locality, bhk) for trust engine's price-deviation signal.
 
-### Initial seed (Bangalore)
+### Initial seed (5-city coverage)
 
-A one-time CSV seed for top-20 Bangalore localities × 1/2/3/4 BHK. Source: scrape Magicbricks search pages once and average the listed prices, OR use a static manually-curated seed to avoid blocking.
+One curated CSV per metro, each holding ~20 localities × 1/2/3/4 BHK = 80 rows. Static, manually-curated values reflecting May 2026 ₹/sqft — chosen over scrape-and-average to avoid portal blocking and keep the seed deterministic.
 
-For MVP, ship a **static curated CSV** of 20 localities × 4 BHK types — that's 80 rows. Bangalore-only at launch.
+Coverage at launch spans **7 distinct cities** across 5 metro CSVs (Delhi NCR is split into the city values that match listing portals' actual `city` field):
+
+| CSV file | `city` values | Localities | Rows |
+|---|---|---|---|
+| `locality_prices_bangalore.csv` | Bangalore | 20 | 80 |
+| `locality_prices_mumbai.csv` | Mumbai | 20 | 80 |
+| `locality_prices_delhi.csv` | Delhi (7), Gurgaon (7), Noida (6) | 20 | 80 |
+| `locality_prices_pune.csv` | Pune | 20 | 80 |
+| `locality_prices_hyderabad.csv` | Hyderabad | 20 | 80 |
+
+Total: ~100 localities × 4 BHK = ~400 rows in `locality_prices`.
 
 ```
 backend/seeds/locality_prices_bangalore.csv
 
 city,locality,bhk,avg_price_per_sqft,sample_size
-Bangalore,Whitefield,1,9500,40
-Bangalore,Whitefield,2,10200,150
-Bangalore,Whitefield,3,10600,200
-Bangalore,Whitefield,4,11400,80
-Bangalore,Indiranagar,1,15000,30
+Bangalore,Whitefield,1,9800,55
+Bangalore,Whitefield,2,10500,210
+Bangalore,Whitefield,3,11200,260
+Bangalore,Whitefield,4,11900,90
+Bangalore,Indiranagar,1,15200,45
 ...
 ```
 
@@ -76,7 +86,7 @@ async def get_avg_price(city: str, locality: str, bhk: int) -> int | None:
 
 ### Loader
 
-`scripts/seed_locality_prices.py` — reads the CSV and upserts into `locality_prices` table. Run once after migration.
+`scripts/seed_locality_prices.py` — loops over the five city CSVs and upserts each into `locality_prices`. Run once after migration; idempotent (re-runs update existing rows in place).
 
 ---
 

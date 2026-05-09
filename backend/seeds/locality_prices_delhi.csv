@@ -1,0 +1,81 @@
+city,locality,bhk,avg_price_per_sqft,sample_size
+Delhi,Vasant Kunj,1,15500,40
+Delhi,Vasant Kunj,2,16500,140
+Delhi,Vasant Kunj,3,17500,160
+Delhi,Vasant Kunj,4,18500,55
+Delhi,Greater Kailash,1,19500,35
+Delhi,Greater Kailash,2,20800,120
+Delhi,Greater Kailash,3,22100,140
+Delhi,Greater Kailash,4,23300,50
+Delhi,Saket,1,13500,55
+Delhi,Saket,2,14400,180
+Delhi,Saket,3,15300,210
+Delhi,Saket,4,16100,75
+Delhi,Dwarka,1,10500,90
+Delhi,Dwarka,2,11200,290
+Delhi,Dwarka,3,11900,320
+Delhi,Dwarka,4,12500,110
+Delhi,Rohini,1,7700,100
+Delhi,Rohini,2,8200,320
+Delhi,Rohini,3,8700,360
+Delhi,Rohini,4,9200,120
+Delhi,Pitampura,1,9700,75
+Delhi,Pitampura,2,10300,250
+Delhi,Pitampura,3,10900,280
+Delhi,Pitampura,4,11500,95
+Delhi,Lajpat Nagar,1,12500,50
+Delhi,Lajpat Nagar,2,13400,170
+Delhi,Lajpat Nagar,3,14200,200
+Delhi,Lajpat Nagar,4,15000,70
+Gurgaon,Golf Course Road,1,15500,45
+Gurgaon,Golf Course Road,2,16500,160
+Gurgaon,Golf Course Road,3,17500,180
+Gurgaon,Golf Course Road,4,18500,65
+Gurgaon,DLF Phase 1,1,14500,40
+Gurgaon,DLF Phase 1,2,15500,140
+Gurgaon,DLF Phase 1,3,16400,160
+Gurgaon,DLF Phase 1,4,17300,55
+Gurgaon,DLF Phase 2,1,13500,45
+Gurgaon,DLF Phase 2,2,14400,150
+Gurgaon,DLF Phase 2,3,15300,170
+Gurgaon,DLF Phase 2,4,16100,60
+Gurgaon,DLF Phase 3,1,12000,50
+Gurgaon,DLF Phase 3,2,12800,170
+Gurgaon,DLF Phase 3,3,13600,200
+Gurgaon,DLF Phase 3,4,14400,70
+Gurgaon,Sohna Road,1,7700,90
+Gurgaon,Sohna Road,2,8200,300
+Gurgaon,Sohna Road,3,8700,330
+Gurgaon,Sohna Road,4,9200,115
+Gurgaon,New Gurgaon,1,7000,100
+Gurgaon,New Gurgaon,2,7500,330
+Gurgaon,New Gurgaon,3,8000,360
+Gurgaon,New Gurgaon,4,8400,120
+Gurgaon,Dwarka Expressway,1,8000,110
+Gurgaon,Dwarka Expressway,2,8600,360
+Gurgaon,Dwarka Expressway,3,9100,400
+Gurgaon,Dwarka Expressway,4,9600,135
+Noida,Sector 18,1,9700,55
+Noida,Sector 18,2,10300,180
+Noida,Sector 18,3,10900,210
+Noida,Sector 18,4,11500,75
+Noida,Sector 50,1,8700,60
+Noida,Sector 50,2,9300,200
+Noida,Sector 50,3,9900,230
+Noida,Sector 50,4,10400,80
+Noida,Sector 137,1,7800,80
+Noida,Sector 137,2,8300,280
+Noida,Sector 137,3,8800,310
+Noida,Sector 137,4,9300,105
+Noida,Sector 75,1,7800,75
+Noida,Sector 75,2,8300,260
+Noida,Sector 75,3,8800,290
+Noida,Sector 75,4,9300,100
+Noida,Sector 62,1,8500,65
+Noida,Sector 62,2,9100,220
+Noida,Sector 62,3,9700,250
+Noida,Sector 62,4,10200,85
+Noida,Noida Extension,1,6500,130
+Noida,Noida Extension,2,6900,420
+Noida,Noida Extension,3,7300,460
+Noida,Noida Extension,4,7700,150

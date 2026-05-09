@@ -1,0 +1,81 @@
+city,locality,bhk,avg_price_per_sqft,sample_size
+Mumbai,Bandra West,1,58000,45
+Mumbai,Bandra West,2,62000,160
+Mumbai,Bandra West,3,66000,180
+Mumbai,Bandra West,4,70000,70
+Mumbai,Khar West,1,52000,40
+Mumbai,Khar West,2,55500,140
+Mumbai,Khar West,3,59000,160
+Mumbai,Khar West,4,62500,55
+Mumbai,Juhu,1,55000,35
+Mumbai,Juhu,2,58800,120
+Mumbai,Juhu,3,62500,140
+Mumbai,Juhu,4,66200,50
+Mumbai,Andheri West,1,28000,75
+Mumbai,Andheri West,2,30000,260
+Mumbai,Andheri West,3,32000,290
+Mumbai,Andheri West,4,33800,100
+Mumbai,Powai,1,28500,70
+Mumbai,Powai,2,30500,250
+Mumbai,Powai,3,32500,280
+Mumbai,Powai,4,34400,95
+Mumbai,Lower Parel,1,48000,40
+Mumbai,Lower Parel,2,51500,150
+Mumbai,Lower Parel,3,54800,170
+Mumbai,Lower Parel,4,58000,60
+Mumbai,Worli,1,62000,30
+Mumbai,Worli,2,66000,110
+Mumbai,Worli,3,70200,130
+Mumbai,Worli,4,74000,45
+Mumbai,Malad West,1,21000,90
+Mumbai,Malad West,2,22500,300
+Mumbai,Malad West,3,23900,330
+Mumbai,Malad West,4,25200,110
+Mumbai,Goregaon West,1,22000,85
+Mumbai,Goregaon West,2,23500,290
+Mumbai,Goregaon West,3,24900,320
+Mumbai,Goregaon West,4,26200,105
+Mumbai,Borivali West,1,20000,95
+Mumbai,Borivali West,2,21400,310
+Mumbai,Borivali West,3,22700,340
+Mumbai,Borivali West,4,23900,115
+Mumbai,Thane West,1,18500,110
+Mumbai,Thane West,2,19800,360
+Mumbai,Thane West,3,21000,400
+Mumbai,Thane West,4,22100,130
+Mumbai,Mulund West,1,19500,90
+Mumbai,Mulund West,2,20800,290
+Mumbai,Mulund West,3,22000,320
+Mumbai,Mulund West,4,23200,105
+Mumbai,Vikhroli,1,23000,65
+Mumbai,Vikhroli,2,24500,220
+Mumbai,Vikhroli,3,26000,250
+Mumbai,Vikhroli,4,27400,85
+Mumbai,Ghatkopar West,1,24000,70
+Mumbai,Ghatkopar West,2,25700,230
+Mumbai,Ghatkopar West,3,27300,260
+Mumbai,Ghatkopar West,4,28800,90
+Mumbai,Chembur,1,25500,75
+Mumbai,Chembur,2,27200,240
+Mumbai,Chembur,3,28900,270
+Mumbai,Chembur,4,30400,95
+Mumbai,Kandivali West,1,20500,90
+Mumbai,Kandivali West,2,21900,300
+Mumbai,Kandivali West,3,23300,330
+Mumbai,Kandivali West,4,24600,110
+Mumbai,Dadar,1,42000,40
+Mumbai,Dadar,2,44900,140
+Mumbai,Dadar,3,47700,160
+Mumbai,Dadar,4,50300,55
+Mumbai,Wadala,1,30000,55
+Mumbai,Wadala,2,32100,180
+Mumbai,Wadala,3,34100,210
+Mumbai,Wadala,4,36000,75
+Mumbai,Kalyan,1,12500,130
+Mumbai,Kalyan,2,13400,420
+Mumbai,Kalyan,3,14200,460
+Mumbai,Kalyan,4,15000,150
+Mumbai,Kharghar,1,13500,120
+Mumbai,Kharghar,2,14400,400
+Mumbai,Kharghar,3,15300,440
+Mumbai,Kharghar,4,16100,140

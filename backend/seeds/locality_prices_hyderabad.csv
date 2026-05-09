@@ -1,0 +1,81 @@
+city,locality,bhk,avg_price_per_sqft,sample_size
+Hyderabad,HITEC City,1,8700,75
+Hyderabad,HITEC City,2,9300,260
+Hyderabad,HITEC City,3,9900,290
+Hyderabad,HITEC City,4,10400,100
+Hyderabad,Gachibowli,1,8700,80
+Hyderabad,Gachibowli,2,9300,280
+Hyderabad,Gachibowli,3,9900,310
+Hyderabad,Gachibowli,4,10400,105
+Hyderabad,Madhapur,1,9700,65
+Hyderabad,Madhapur,2,10300,230
+Hyderabad,Madhapur,3,10900,260
+Hyderabad,Madhapur,4,11500,90
+Hyderabad,Kondapur,1,7700,75
+Hyderabad,Kondapur,2,8200,260
+Hyderabad,Kondapur,3,8700,290
+Hyderabad,Kondapur,4,9200,100
+Hyderabad,Banjara Hills,1,13500,35
+Hyderabad,Banjara Hills,2,14400,120
+Hyderabad,Banjara Hills,3,15300,140
+Hyderabad,Banjara Hills,4,16100,50
+Hyderabad,Jubilee Hills,1,15500,30
+Hyderabad,Jubilee Hills,2,16500,110
+Hyderabad,Jubilee Hills,3,17500,130
+Hyderabad,Jubilee Hills,4,18500,45
+Hyderabad,Kukatpally,1,6800,90
+Hyderabad,Kukatpally,2,7200,300
+Hyderabad,Kukatpally,3,7700,330
+Hyderabad,Kukatpally,4,8100,110
+Hyderabad,Miyapur,1,5800,100
+Hyderabad,Miyapur,2,6200,340
+Hyderabad,Miyapur,3,6600,380
+Hyderabad,Miyapur,4,7000,125
+Hyderabad,Manikonda,1,7700,70
+Hyderabad,Manikonda,2,8200,240
+Hyderabad,Manikonda,3,8700,270
+Hyderabad,Manikonda,4,9200,90
+Hyderabad,Tellapur,1,6800,75
+Hyderabad,Tellapur,2,7200,260
+Hyderabad,Tellapur,3,7700,290
+Hyderabad,Tellapur,4,8100,95
+Hyderabad,Nallagandla,1,6800,70
+Hyderabad,Nallagandla,2,7200,240
+Hyderabad,Nallagandla,3,7700,270
+Hyderabad,Nallagandla,4,8100,90
+Hyderabad,Narsingi,1,7700,65
+Hyderabad,Narsingi,2,8200,220
+Hyderabad,Narsingi,3,8700,250
+Hyderabad,Narsingi,4,9200,85
+Hyderabad,Kokapet,1,8700,60
+Hyderabad,Kokapet,2,9300,210
+Hyderabad,Kokapet,3,9900,240
+Hyderabad,Kokapet,4,10400,80
+Hyderabad,Financial District,1,8700,70
+Hyderabad,Financial District,2,9300,240
+Hyderabad,Financial District,3,9900,270
+Hyderabad,Financial District,4,10400,90
+Hyderabad,Mehdipatnam,1,6800,80
+Hyderabad,Mehdipatnam,2,7200,270
+Hyderabad,Mehdipatnam,3,7700,300
+Hyderabad,Mehdipatnam,4,8100,100
+Hyderabad,Begumpet,1,10500,55
+Hyderabad,Begumpet,2,11200,190
+Hyderabad,Begumpet,3,11900,220
+Hyderabad,Begumpet,4,12500,75
+Hyderabad,Ameerpet,1,7700,75
+Hyderabad,Ameerpet,2,8200,250
+Hyderabad,Ameerpet,3,8700,280
+Hyderabad,Ameerpet,4,9200,95
+Hyderabad,Secunderabad,1,8700,70
+Hyderabad,Secunderabad,2,9300,240
+Hyderabad,Secunderabad,3,9900,270
+Hyderabad,Secunderabad,4,10400,90
+Hyderabad,LB Nagar,1,5800,100
+Hyderabad,LB Nagar,2,6200,330
+Hyderabad,LB Nagar,3,6600,360
+Hyderabad,LB Nagar,4,7000,120
+Hyderabad,Uppal,1,5800,95
+Hyderabad,Uppal,2,6200,310
+Hyderabad,Uppal,3,6600,340
+Hyderabad,Uppal,4,7000,115

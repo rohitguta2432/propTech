@@ -17,7 +17,8 @@ from typing import Any
 from sqlalchemy.orm import Session
 
 from app.integrations import locality_prices
-from app.integrations.rera_karnataka import RERAResult, lookup as rera_lookup
+from app.integrations.rera import lookup as rera_lookup
+from app.integrations.rera_karnataka import RERAResult
 from app.models.schemas import (
     CheckResponse,
     Flag,
@@ -46,7 +47,12 @@ async def compute_score(
     base = 100
 
     # ---------------- RERA ----------------
-    rera_result: RERAResult = await rera_lookup(listing.rera_id, db)
+    # Pass listing.state as a hint so Maharashtra listings hit MahaRERA
+    # even if the id shape is ambiguous. Inference handles the common
+    # case when state isn't set on the scraped listing.
+    rera_result: RERAResult = await rera_lookup(
+        listing.rera_id, db, state_hint=listing.state
+    )
     rera_status = rera_result.status
 
     if rera_status == "MATCH":

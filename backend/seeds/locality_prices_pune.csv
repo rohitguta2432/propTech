@@ -1,0 +1,81 @@
+city,locality,bhk,avg_price_per_sqft,sample_size
+Pune,Koregaon Park,1,13500,40
+Pune,Koregaon Park,2,14400,140
+Pune,Koregaon Park,3,15300,160
+Pune,Koregaon Park,4,16100,55
+Pune,Kalyani Nagar,1,11500,45
+Pune,Kalyani Nagar,2,12300,150
+Pune,Kalyani Nagar,3,13100,170
+Pune,Kalyani Nagar,4,13800,60
+Pune,Aundh,1,10500,55
+Pune,Aundh,2,11200,180
+Pune,Aundh,3,11900,210
+Pune,Aundh,4,12500,75
+Pune,Baner,1,9700,70
+Pune,Baner,2,10300,230
+Pune,Baner,3,10900,260
+Pune,Baner,4,11500,90
+Pune,Hadapsar,1,7700,80
+Pune,Hadapsar,2,8200,270
+Pune,Hadapsar,3,8700,300
+Pune,Hadapsar,4,9200,100
+Pune,Wakad,1,7700,85
+Pune,Wakad,2,8200,280
+Pune,Wakad,3,8700,310
+Pune,Wakad,4,9200,105
+Pune,Hinjewadi,1,6800,110
+Pune,Hinjewadi,2,7200,360
+Pune,Hinjewadi,3,7700,400
+Pune,Hinjewadi,4,8100,135
+Pune,Pimpri-Chinchwad,1,6800,100
+Pune,Pimpri-Chinchwad,2,7200,330
+Pune,Pimpri-Chinchwad,3,7700,360
+Pune,Pimpri-Chinchwad,4,8100,120
+Pune,Magarpatta,1,8700,65
+Pune,Magarpatta,2,9300,220
+Pune,Magarpatta,3,9900,250
+Pune,Magarpatta,4,10400,85
+Pune,Kothrud,1,8700,60
+Pune,Kothrud,2,9300,200
+Pune,Kothrud,3,9900,230
+Pune,Kothrud,4,10400,80
+Pune,NIBM Road,1,7700,70
+Pune,NIBM Road,2,8200,240
+Pune,NIBM Road,3,8700,270
+Pune,NIBM Road,4,9200,90
+Pune,Viman Nagar,1,10500,55
+Pune,Viman Nagar,2,11200,190
+Pune,Viman Nagar,3,11900,220
+Pune,Viman Nagar,4,12500,75
+Pune,Wagholi,1,5800,120
+Pune,Wagholi,2,6200,400
+Pune,Wagholi,3,6600,440
+Pune,Wagholi,4,7000,145
+Pune,Ravet,1,5800,110
+Pune,Ravet,2,6200,370
+Pune,Ravet,3,6600,410
+Pune,Ravet,4,7000,135
+Pune,Tathawade,1,5800,100
+Pune,Tathawade,2,6200,340
+Pune,Tathawade,3,6600,380
+Pune,Tathawade,4,7000,125
+Pune,Lohegaon,1,6800,75
+Pune,Lohegaon,2,7200,260
+Pune,Lohegaon,3,7700,290
+Pune,Lohegaon,4,8100,95
+Pune,Bavdhan,1,7700,75
+Pune,Bavdhan,2,8200,250
+Pune,Bavdhan,3,8700,280
+Pune,Bavdhan,4,9200,95
+Pune,Sus Road,1,6800,80
+Pune,Sus Road,2,7200,280
+Pune,Sus Road,3,7700,310
+Pune,Sus Road,4,8100,105
+Pune,Pashan,1,8700,60
+Pune,Pashan,2,9300,210
+Pune,Pashan,3,9900,240
+Pune,Pashan,4,10400,80
+Pune,Kharadi,1,8700,75
+Pune,Kharadi,2,9300,260
+Pune,Kharadi,3,9900,290
+Pune,Kharadi,4,10400,100

@@ -97,6 +97,7 @@ That's the whole sprint. Everything else (web UI, extension, WhatsApp) is layere
 - [x] `scripts/seed_locality_prices.py` — runnable; ran successfully against live Supabase, confirmed 80 rows persisted.
 - [x] `PRICE_BELOW_MARKET` and `PRICE_ABOVE_MARKET` signals wired in trust engine — see Day 7.
 - [x] 4/4 tests pass.
+- **Coverage expansion (post-Day-9)**: extended to 4 more metros — `locality_prices_{mumbai,delhi,pune,hyderabad}.csv`, each 20 localities × 4 BHK = 80 rows. `delhi` CSV is split internally across 7 Delhi + 7 Gurgaon + 6 Noida localities (city column matches listing portals). Total: 7 distinct cities × ~20 localities = **~400 rows** in `locality_prices`. Seed script now loops over all 5 CSVs; one extra test (`test_get_avg_price_works_for_all_cities`) covers all 7 city values.
 
 ### Day 10 — Caching layer
 - [ ] Upstash Redis setup.
@@ -111,10 +112,22 @@ That's the whole sprint. Everything else (web UI, extension, WhatsApp) is layere
 - [x] Pro key bypass via `cost_func` returning 0 for `pk_*`/`bk_*` keys (zero-cost = never blocks); future per-tier limits drop in without API change.
 - [x] 5/5 tests pass: under-limit, over-limit, healthz exempt, pro key bypass, 429 response shape (full JSON + headers).
 
-### Day 12 — Feedback endpoint
-- [ ] `POST /v1/feedback` writes to `feedback` table.
-- [ ] Email notification (Resend) to founder on each new flag.
-- **Done when**: a feedback POST creates a row + sends an email.
+### Day 12 — Feedback endpoint ✅ (email deferred)
+- [x] `POST /v1/feedback` writes to `feedback` table — `app/api/feedback.py`.
+- [x] `FeedbackRequest` / `FeedbackResponse` Pydantic models with `EmailStr` validation — `app/models/schemas.py`.
+- [x] Reason enum enforced at the schema level (`false_positive | false_negative | data_error | other`) → invalid reasons return 422.
+- [x] 404 `CHECK_NOT_FOUND` when the referenced check id does not exist.
+- [x] Same `@limiter.limit("10/minute", cost=cost_func)` decorator as `/v1/check` so the endpoint is bucketed alongside the rest of the anon traffic.
+- [x] DB errors caught and surfaced as 503 (`ENGINE_ERROR`) instead of leaking SQLAlchemy stacktraces.
+- [x] Structured `WARNING` log line on every successful insert (`new_feedback` event with feedback id, check id, reason, has_email) — cheap stand-in for the founder email until Resend is wired up.
+- [x] Router wired in `app/main.py` under `/v1`, tagged `feedback` in the OpenAPI doc.
+- [x] 6/6 unit tests pass (`tests/test_feedback.py`): creates_row, check_not_found, validates_reason, validates_email, email_optional, rate_limited.
+- [x] Full suite still green — 78/78 pytest tests pass.
+- **Deviations**:
+  - **Resend email is deferred to a later sprint** (Day 12 plan called for it; see "Do NOT add Sentry/Resend" guardrail in the implementation brief). For now, the structured `new_feedback` warning log is what the founder watches.
+  - Added `email-validator>=2.0.0` (transitively `dnspython`) to the venv to support Pydantic `EmailStr`. Update `requirements.txt` next time the lock is touched.
+  - Bumped `tests/conftest.py` `db_session` fixture to use `StaticPool` + `check_same_thread=False` so the in-memory SQLite is shared across the TestClient's request thread and the test thread. Existing tests unaffected.
+- **Done when**: ~~a feedback POST creates a row + sends an email.~~ A feedback POST creates a row and emits a structured warning log. Email integration tracked for Sprint 2.
 
 ### Day 13 — Deploy ✅ (changed: Vercel Python serverless instead of Railway)
 - [x] **Backend deployed to Vercel** as `propcheck-api` (Python @vercel/python runtime, ASGI app).

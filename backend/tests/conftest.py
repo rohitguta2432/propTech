@@ -20,6 +20,7 @@ from sqlalchemy import BigInteger, create_engine
 from sqlalchemy.dialects.postgresql import INET, JSONB
 from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.pool import StaticPool
 
 # Register SQLite renderings for the Postgres-only column types so
 # `Base.metadata.create_all` works against an in-memory SQLite engine.
@@ -49,8 +50,19 @@ from app.models import db as _models  # noqa: E402,F401
 
 @pytest.fixture()
 def db_session() -> Session:
-    """Fresh in-memory SQLite session per test."""
-    engine = create_engine("sqlite:///:memory:", future=True)
+    """Fresh in-memory SQLite session per test.
+
+    Uses ``StaticPool`` + ``check_same_thread=False`` so that every
+    connection drawn from the engine sees the SAME in-memory database.
+    Without this, each connection (and crucially, each request thread
+    spawned by FastAPI's TestClient) gets its own fresh empty DB.
+    """
+    engine = create_engine(
+        "sqlite:///:memory:",
+        future=True,
+        poolclass=StaticPool,
+        connect_args={"check_same_thread": False},
+    )
     Base.metadata.create_all(engine)
     SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False, future=True)
     session = SessionLocal()

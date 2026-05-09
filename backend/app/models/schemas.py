@@ -2,7 +2,7 @@
 from datetime import datetime
 from typing import Literal
 
-from pydantic import BaseModel, Field, HttpUrl
+from pydantic import BaseModel, EmailStr, Field, HttpUrl
 
 
 class CheckRequest(BaseModel):
@@ -54,3 +54,31 @@ class CheckResponse(BaseModel):
     verifications: Verifications
     checked_at: datetime
     cache_hit: bool = False
+
+
+# --- Feedback (Sprint 1 Day 12) -----------------------------------------------
+
+FeedbackReason = Literal["false_positive", "false_negative", "data_error", "other"]
+
+
+class FeedbackRequest(BaseModel):
+    """User-flagged wrong score. See specs/api.md `POST /v1/feedback`."""
+
+    check_id: str = Field(..., description="ID of the check being flagged.")
+    reason: FeedbackReason = Field(
+        ...,
+        description="Why the user is flagging this check.",
+    )
+    note: str | None = Field(
+        default=None,
+        description="Optional free-text context from the reporter.",
+    )
+    reporter_email: EmailStr | None = Field(
+        default=None,
+        description="Optional email so we can follow up.",
+    )
+
+
+class FeedbackResponse(BaseModel):
+    id: int
+    status: Literal["pending", "reviewed", "accepted", "rejected"]
