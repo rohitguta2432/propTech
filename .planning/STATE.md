@@ -34,7 +34,7 @@
 | 6 Calibration | ⏳ blocked on user-supplied real URLs |
 | 7 Real scrapes from production | ⏳ blocked on Railway/Fly migration |
 | 8 Chrome extension | ✅ DONE — built locally, awaiting Chrome Web Store publish ($5 one-time) |
-| 9 WhatsApp bot | 🚧 planned |
+| 9 WhatsApp bot | 🅿️ parked (out of stock) — Chrome extension covers same distribution; revisit on user demand |
 | 10 Auth + Pro/B2B keys | 🚧 planned |
 | 11 Multi-state RERA + cities | 🚧 partial (Karnataka + Maharashtra done) |
 

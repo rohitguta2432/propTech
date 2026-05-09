@@ -186,7 +186,18 @@ class NinetyNineAcresScraper:
                 fetch_error=f"error: {exc!s}",
             )
 
-        return self._parse(html, url, listing_id)
+        listing = self._parse(html, url, listing_id)
+
+        # LLM fallback (Gemma 4 31B via OpenRouter free tier) when regex left
+        # key fields blank. No-op if OPENROUTER_API_KEY is unset.
+        try:
+            from app.integrations import llm_parser
+
+            listing = await llm_parser.enrich(html, listing)
+        except Exception:
+            pass
+
+        return listing
 
     # ---- Sync parser, easy to unit-test --------------------------------
 

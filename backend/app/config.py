@@ -14,5 +14,12 @@ class Settings(BaseSettings):
     redis_url: str | None = None
     rera_karnataka_base: str = "https://rera.karnataka.gov.in"
 
+    # LLM parsing fallback — Gemma 4 31B via OpenRouter free tier ($0/M tokens).
+    # Get a free key at https://openrouter.ai → no credit card needed.
+    # If unset, scrapers fall back to regex-only (still works, just less coverage).
+    openrouter_api_key: str | None = None
+    openrouter_model: str = "google/gemma-4-31b-it:free"
+    openrouter_base_url: str = "https://openrouter.ai/api/v1"
+
 
 settings = Settings()

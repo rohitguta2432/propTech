@@ -399,7 +399,7 @@ class MagicbricksScraper:
             )
 
         try:
-            return _parse(html, url, listing_id)
+            listing = _parse(html, url, listing_id)
         except Exception as e:
             return ScrapedListing(
                 portal=self.portal,
@@ -408,6 +408,20 @@ class MagicbricksScraper:
                 fetch_error=f"parse_crashed: {type(e).__name__}: {e}",
                 raw_html_snippet=html[:4096] if html else None,
             )
+
+        # If regex left key fields blank, try Gemma 4 31B via OpenRouter.
+        # No-op if OPENROUTER_API_KEY isn't set; never raises.
+        try:
+            from app.integrations import llm_parser
+
+            listing = await llm_parser.enrich(html, listing)
+        except Exception as e:
+            # LLM fallback must never break the scrape path.
+            listing.fetch_error = (
+                listing.fetch_error or f"llm_fallback_skipped: {type(e).__name__}"
+            )
+
+        return listing
 
 
 _instance: PortalScraper = MagicbricksScraper()
