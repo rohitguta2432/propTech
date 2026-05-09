@@ -9,6 +9,8 @@ Technical specifications for the PropCheck product. Read these before writing an
 | [database.md](database.md) | Postgres schema — every table with CREATE statements, indexes, retention policy |
 | [api.md](api.md) | Full API contract — endpoints, request/response shapes, errors, rate limits, versioning |
 | [trust-engine.md](trust-engine.md) | Scoring rules v1 — 11 signals, deltas, aggregation formula, calibration targets |
+| [scrapers.md](scrapers.md) | Per-portal scraping spec — `ScrapedListing` shape, what fields to extract, fixture-based testing |
+| [integrations.md](integrations.md) | External data sources — Karnataka RERA, locality price index, image hash |
 | [sprint-1.md](sprint-1.md) | First 14-day development plan with daily tasks and definition of done |
 
 ## Conventions

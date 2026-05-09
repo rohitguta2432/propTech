@@ -1,0 +1,20 @@
+{
+  "listing_id": "4d4234567",
+  "title": "3 BHK Apartment in Whitefield, Bangalore",
+  "price_inr": 12000000,
+  "bhk": 3,
+  "area_sqft": 1450,
+  "locality": "Whitefield",
+  "city": "Bangalore",
+  "state": null,
+  "rera_id": "PRM/KA/RERA/1251/446/PR/170820/000123",
+  "builder_name": "ABC Developers",
+  "listed_at": null,
+  "image_urls": [
+    "https://img.magicbricks.com/property/photo-1.jpg",
+    "https://img.magicbricks.com/property/photo-2.jpg",
+    "https://img.magicbricks.com/property/photo-3.jpg"
+  ],
+  "description": "Spacious 3 BHK apartment in a gated community by ABC Developers. East-facing,\n      semi-furnished. Walking distance to ITPL, Phoenix Marketcity, and Whitefield Main Road.\n      Amenities include 24x7 security, swimming pool, gym, kids play area, clubhouse,\n      and reserved covered parking. The carpet area is 1450 sqft with a balcony overlooking\n      the central garden.",
+  "fetch_error": null
+}

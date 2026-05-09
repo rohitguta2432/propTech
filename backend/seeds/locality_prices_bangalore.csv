@@ -1,0 +1,81 @@
+city,locality,bhk,avg_price_per_sqft,sample_size
+Bangalore,Whitefield,1,9800,55
+Bangalore,Whitefield,2,10500,210
+Bangalore,Whitefield,3,11200,260
+Bangalore,Whitefield,4,11900,90
+Bangalore,Indiranagar,1,15200,45
+Bangalore,Indiranagar,2,16100,160
+Bangalore,Indiranagar,3,17000,180
+Bangalore,Indiranagar,4,17800,70
+Bangalore,Koramangala,1,14500,50
+Bangalore,Koramangala,2,15400,180
+Bangalore,Koramangala,3,16200,200
+Bangalore,Koramangala,4,17100,75
+Bangalore,HSR Layout,1,10200,60
+Bangalore,HSR Layout,2,11000,220
+Bangalore,HSR Layout,3,11600,250
+Bangalore,HSR Layout,4,12300,85
+Bangalore,JP Nagar,1,9700,55
+Bangalore,JP Nagar,2,10300,200
+Bangalore,JP Nagar,3,10900,230
+Bangalore,JP Nagar,4,11500,80
+Bangalore,Electronic City,1,7800,70
+Bangalore,Electronic City,2,8400,260
+Bangalore,Electronic City,3,8900,300
+Bangalore,Electronic City,4,9300,100
+Bangalore,Marathahalli,1,8800,65
+Bangalore,Marathahalli,2,9400,240
+Bangalore,Marathahalli,3,9900,270
+Bangalore,Marathahalli,4,10400,95
+Bangalore,Sarjapur Road,1,8600,80
+Bangalore,Sarjapur Road,2,9200,300
+Bangalore,Sarjapur Road,3,9700,330
+Bangalore,Sarjapur Road,4,10200,110
+Bangalore,Bellandur,1,9900,70
+Bangalore,Bellandur,2,10600,250
+Bangalore,Bellandur,3,11200,280
+Bangalore,Bellandur,4,11800,95
+Bangalore,Hebbal,1,9300,60
+Bangalore,Hebbal,2,9900,210
+Bangalore,Hebbal,3,10500,240
+Bangalore,Hebbal,4,11100,80
+Bangalore,Yelahanka,1,7400,55
+Bangalore,Yelahanka,2,7900,200
+Bangalore,Yelahanka,3,8400,220
+Bangalore,Yelahanka,4,8800,75
+Bangalore,Banashankari,1,9100,50
+Bangalore,Banashankari,2,9700,190
+Bangalore,Banashankari,3,10200,210
+Bangalore,Banashankari,4,10800,70
+Bangalore,Jayanagar,1,12500,45
+Bangalore,Jayanagar,2,13300,170
+Bangalore,Jayanagar,3,14000,190
+Bangalore,Jayanagar,4,14700,65
+Bangalore,Bannerghatta Road,1,8500,60
+Bangalore,Bannerghatta Road,2,9100,230
+Bangalore,Bannerghatta Road,3,9600,260
+Bangalore,Bannerghatta Road,4,10100,85
+Bangalore,Kengeri,1,7000,50
+Bangalore,Kengeri,2,7500,180
+Bangalore,Kengeri,3,7900,200
+Bangalore,Kengeri,4,8300,65
+Bangalore,Hennur,1,7600,55
+Bangalore,Hennur,2,8200,200
+Bangalore,Hennur,3,8700,220
+Bangalore,Hennur,4,9100,75
+Bangalore,Thanisandra,1,7900,60
+Bangalore,Thanisandra,2,8500,230
+Bangalore,Thanisandra,3,9000,250
+Bangalore,Thanisandra,4,9400,85
+Bangalore,BTM Layout,1,9500,55
+Bangalore,BTM Layout,2,10100,200
+Bangalore,BTM Layout,3,10600,220
+Bangalore,BTM Layout,4,11200,75
+Bangalore,Brookefield,1,9600,50
+Bangalore,Brookefield,2,10300,180
+Bangalore,Brookefield,3,10900,210
+Bangalore,Brookefield,4,11500,70
+Bangalore,Bommanahalli,1,7700,60
+Bangalore,Bommanahalli,2,8300,220
+Bangalore,Bommanahalli,3,8800,240
+Bangalore,Bommanahalli,4,9200,80

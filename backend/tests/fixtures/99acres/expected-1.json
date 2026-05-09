@@ -1,0 +1,14 @@
+{
+  "portal": "99acres",
+  "listing_id": "P12345",
+  "title": "2 BHK Flat in Indiranagar Bangalore",
+  "price_inr": 18500000,
+  "bhk": 2,
+  "area_sqft": 1100,
+  "locality": "Indiranagar",
+  "city": "Bangalore",
+  "rera_id": "PRM/KA/RERA/1251/446/PR/180920/000456",
+  "builder_name": "Prestige Group",
+  "image_url_count": 3,
+  "first_image_url": "https://img.99acres.com/photos/aa1.jpg"
+}

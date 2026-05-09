@@ -1,8 +1,12 @@
 """POST /v1/check — submit a property listing URL for trust evaluation.
 
-Day 4: real URL parsing and per-call DB persistence.
-Day 5+: real scraping replaces compute_stub().
+Day 5–7 wired up:
+- URL parser detects portal + listing_id (Day 4).
+- Scraper fetches the live listing HTML (Day 5).
+- Trust engine runs RERA + price-deviation + listing-age signals (Day 7).
+- Persist every check + 24h cache (Day 4 + Day 10 light version).
 """
+import asyncio
 from datetime import UTC, datetime
 
 from fastapi import APIRouter, Depends, HTTPException, Request
@@ -10,16 +14,21 @@ from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
-from app.engine.trust_score import compute_stub
+from app.engine.trust_score import compute_score, compute_stub
 from app.models.db import Check
 from app.models.schemas import CheckRequest, CheckResponse
 from app.parsers.router import route, supported_portals
+from app.scrapers.base import ScrapedListing
+from app.scrapers.router import get as get_scraper
+
+# Tight upper bound to fit Vercel's 10s serverless ceiling.
+SCRAPER_TIMEOUT_S = 6.0
 
 router = APIRouter()
 
 
 @router.post("/check", response_model=CheckResponse)
-def submit_check(
+async def submit_check(
     payload: CheckRequest,
     request: Request,
     db: Session = Depends(get_db),
@@ -35,23 +44,56 @@ def submit_check(
             },
         )
 
-    # Cache lookup — same URL within 24h returns the cached report.
+    # Cache lookup — same URL within 24h returns the cached row.
     cached = (
         db.query(Check)
         .filter(Check.url == payload.url)
         .order_by(Check.checked_at.desc())
         .first()
     )
-    if cached and (datetime.now(UTC) - cached.checked_at).total_seconds() < 86_400:
+    if cached and (datetime.now(UTC) - _ensure_utc(cached.checked_at)).total_seconds() < 86_400:
         return _row_to_response(cached, cache_hit=True)
 
-    # Build a fresh report. Currently a deterministic stub — real scoring lands Day 7.
-    report = compute_stub(payload.url)
-    # Override portal/listing_id with what the parser detected.
-    report.property.portal = portal_route.portal
-    report.property.listing_id = portal_route.listing_id
+    # Scrape the listing.
+    scraper = get_scraper(portal_route.portal)
+    listing: ScrapedListing
+    if scraper is not None:
+        try:
+            listing = await asyncio.wait_for(
+                scraper.fetch(payload.url, portal_route.listing_id),
+                timeout=SCRAPER_TIMEOUT_S,
+            )
+        except asyncio.TimeoutError:
+            listing = ScrapedListing(
+                portal=portal_route.portal,
+                listing_id=portal_route.listing_id,
+                url=payload.url,
+                fetch_error=f"timeout after {SCRAPER_TIMEOUT_S}s",
+            )
+        except Exception as exc:  # belt-and-braces — scrapers shouldn't raise
+            listing = ScrapedListing(
+                portal=portal_route.portal,
+                listing_id=portal_route.listing_id,
+                url=payload.url,
+                fetch_error=f"{type(exc).__name__}: {exc}",
+            )
+    else:
+        listing = ScrapedListing(
+            portal=portal_route.portal,
+            listing_id=portal_route.listing_id,
+            url=payload.url,
+            fetch_error="no scraper for this portal",
+        )
 
-    # Persist.
+    # If scraping returned nothing useful, fall back to the stub. Otherwise score it.
+    if _is_empty(listing):
+        report = compute_stub(payload.url)
+        report.property.portal = portal_route.portal
+        report.property.listing_id = portal_route.listing_id
+    else:
+        report = await compute_score(listing, url=payload.url, db=db)
+
+    # Persist (best-effort).
     try:
         row = Check(
             id=report.id,
@@ -75,28 +117,46 @@ def submit_check(
         db.add(row)
         db.commit()
     except OperationalError:
-        # If the DB is briefly unreachable, still return the report — don't block the user.
         db.rollback()
 
     return report
 
 
-def _row_to_response(row: Check, cache_hit: bool) -> CheckResponse:
-    return CheckResponse.model_validate(
-        {
-            "id": row.id,
-            "score": row.score,
-            "label": row.label,
-            "summary": row.summary,
-            "property": row.property_data,
-            "red_flags": row.red_flags,
-            "green_flags": row.green_flags,
-            "checklist": row.checklist,
-            "verifications": row.verifications,
-            "checked_at": row.checked_at,
-            "cache_hit": cache_hit,
-        }
+# ------------------ helpers ------------------
+
+
+def _is_empty(listing: ScrapedListing) -> bool:
+    """A scrape that gave us literally nothing useful — fall back to stub."""
+    return all(
+        getattr(listing, f) in (None, []) for f in (
+            "title",
+            "price_inr",
+            "bhk",
+            "area_sqft",
+            "rera_id",
+            "builder_name",
+        )
     )
+
+
+def _ensure_utc(dt: datetime) -> datetime:
+    return dt if dt.tzinfo else dt.replace(tzinfo=UTC)
+
+
+def _row_to_response(row: Check, cache_hit: bool) -> CheckResponse:
+    return CheckResponse.model_validate({
+        "id": row.id,
+        "score": row.score,
+        "label": row.label,
+        "summary": row.summary,
+        "property": row.property_data,
+        "red_flags": row.red_flags,
+        "green_flags": row.green_flags,
+        "checklist": row.checklist,
+        "verifications": row.verifications,
+        "checked_at": row.checked_at,
+        "cache_hit": cache_hit,
+    })
 
 
 def _client_ip(request: Request) -> str | None:

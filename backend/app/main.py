@@ -5,6 +5,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api import check, health
 from app.config import settings
 
+# Import scraper modules so each registers itself with the router.
+# (Side-effect imports — order doesn't matter; each calls register() at module load.)
+from app.scrapers import acres99, magicbricks  # noqa: F401
+
 app = FastAPI(
     title="PropCheck API",
     description="Trust layer for Indian property listings.",
