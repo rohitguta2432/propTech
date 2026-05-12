@@ -65,7 +65,7 @@ export default function PrivacyPage() {
 
         <Section title="Your rights">
           <p className="text-ink/85 leading-relaxed mb-3">
-            Email <a className="text-orange underline" href="mailto:hello@propcheck.in">hello@propcheck.in</a> to:
+            Email <a className="text-orange underline" href="mailto:rohitgupta2432@gmail.com">rohitgupta2432@gmail.com</a> to:
           </p>
           <ul className="list-disc pl-5 space-y-2 text-ink/85">
             <li>Request a copy of any data we hold tied to your IP, email, or submitted URL.</li>
@@ -95,7 +95,7 @@ export default function PrivacyPage() {
 
         <Section title="Contact">
           <p className="text-ink/85 leading-relaxed">
-            <a className="text-orange underline" href="mailto:hello@propcheck.in">hello@propcheck.in</a>. Bangalore, India.
+            <a className="text-orange underline" href="mailto:rohitgupta2432@gmail.com">rohitgupta2432@gmail.com</a>. Bangalore, India.
           </p>
         </Section>
 

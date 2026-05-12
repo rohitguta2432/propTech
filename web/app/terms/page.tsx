@@ -96,7 +96,7 @@ export default function TermsPage() {
 
         <Section title="Contact">
           <p className="text-ink/85 leading-relaxed">
-            <a className="text-orange underline" href="mailto:hello@propcheck.in">hello@propcheck.in</a>.
+            <a className="text-orange underline" href="mailto:rohitgupta2432@gmail.com">rohitgupta2432@gmail.com</a>.
           </p>
         </Section>
 

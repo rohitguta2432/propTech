@@ -72,10 +72,10 @@ export default function AboutPage() {
         <h2 className="heading text-3xl font-bold mb-4">Want in?</h2>
         <p className="text-ink/70 mb-6">Email us if you&apos;re a buyer, a builder, a bank, or a journalist with questions.</p>
         <a
-          href="mailto:hello@propcheck.in"
+          href="mailto:rohitgupta2432@gmail.com"
           className="inline-block bg-orange hover:bg-orange-deep text-white heading font-semibold text-sm px-6 py-3 rounded-xl transition"
         >
-          hello@propcheck.in →
+          rohitgupta2432@gmail.com →
         </a>
       </section>
 

@@ -10,7 +10,7 @@ export function Footer() {
         <div className="flex gap-5 heading">
           <Link href="/how-it-works" className="hover:text-ink">How it works</Link>
           <Link href="/for-lenders" className="hover:text-ink">For lenders</Link>
-          <a href="mailto:hello@propcheck.in" className="hover:text-ink">Contact</a>
+          <a href="mailto:rohitgupta2432@gmail.com" className="hover:text-ink">Contact</a>
         </div>
       </div>
       <div className="text-center text-xs text-ink/50 mt-4 font-body">

@@ -244,7 +244,7 @@ function Pricing() {
               {t.features.map((f) => <li key={f}>· {f}</li>)}
             </ul>
             <a
-              href="mailto:hello@propcheck.in?subject=PropCheck%20API%20access"
+              href="mailto:rohitgupta2432@gmail.com?subject=PropCheck%20API%20access"
               className={`mt-6 block text-center heading font-semibold text-sm px-4 py-2 rounded-xl transition ${
                 t.highlight
                   ? "bg-orange hover:bg-orange-deep text-white"
@@ -297,10 +297,10 @@ function Cta() {
       <h2 className="heading text-3xl font-bold mb-4">Start a pilot</h2>
       <p className="text-ink/70 mb-6">First 1,000 checks free. One-hour onboarding. Slack support.</p>
       <a
-        href="mailto:hello@propcheck.in?subject=PropCheck%20API%20pilot&body=Hi%20%E2%80%94%20I%27d%20like%20to%20pilot%20PropCheck.%20Volume%20expectation%3A%20%5B%5D%20checks%2Fmonth.%20Use%20case%3A%20%5B%5D."
+        href="mailto:rohitgupta2432@gmail.com?subject=PropCheck%20API%20pilot&body=Hi%20%E2%80%94%20I%27d%20like%20to%20pilot%20PropCheck.%20Volume%20expectation%3A%20%5B%5D%20checks%2Fmonth.%20Use%20case%3A%20%5B%5D."
         className="inline-block bg-orange hover:bg-orange-deep text-white heading font-semibold text-sm px-6 py-3 rounded-xl transition"
       >
-        Email hello@propcheck.in →
+        Email rohitgupta2432@gmail.com →
       </a>
       <p className="mt-6 text-xs text-ink/50">
         We respond within one business day. Or hit{" "}
