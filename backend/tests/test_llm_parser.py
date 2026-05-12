@@ -211,8 +211,13 @@ async def test_html_is_truncated_before_send():
         mock.post("/chat/completions").mock(side_effect=_capture)
         await llm_parser.enrich(huge_html, listing)
 
-    # Prompt itself is small + 12K trimmed HTML max — never the full 50K.
-    assert len(captured["prompt"]) < 14_000
+    # Prompt header (~700 chars) + at most _MAX_HTML_CHARS of HTML.
+    # The point of this test is "we don't ship the full 50K body" — anything
+    # under ~32K proves the truncation ran. The exact ceiling is tied to
+    # `_MAX_HTML_CHARS` in llm_parser; check against that + header headroom.
+    from app.integrations.llm_parser import _MAX_HTML_CHARS
+    assert len(captured["prompt"]) < _MAX_HTML_CHARS + 2_000
+    assert len(captured["prompt"]) < len(huge_html), "should be trimmed below the 50K input"
 
 
 @pytest.mark.asyncio
