@@ -122,6 +122,22 @@ button { font: inherit; cursor: pointer; }
 .badge[data-label="safe"]    { background: ${tokens.gradSafe}; border-color: ${tokens.safe}; }
 .badge[data-label="caution"] { background: ${tokens.gradAmber}; border-color: ${tokens.amber}; }
 .badge[data-label="risky"]   { background: ${tokens.gradRisky}; border-color: ${tokens.risky}; }
+.badge[data-confidence="low"] {
+  /* Engine couldn't get enough data to score — render as neutral, not a verdict. */
+  background: ${tokens.gradLoading};
+  border-color: var(--subtle);
+  color: ${tokens.inkMuted};
+}
+.badge[data-confidence="low"] .score,
+.badge[data-confidence="low"] .label { color: ${tokens.inkMuted}; }
+.badge[data-confidence="low"].size-lg .label {
+  /* "Not enough data" is longer than SAFE / CAUTION / RISKY; shrink to fit. */
+  font-size: 11px;
+  letter-spacing: 0;
+  text-transform: none;
+  font-weight: 600;
+  line-height: 1.2;
+}
 .badge[data-loading="true"] {
   background: ${tokens.gradLoading};
   border-color: var(--subtle);

@@ -143,7 +143,11 @@ function showCardBadge(card: HTMLElement, listingUrl: string): void {
       // Leave shimmer; user can click to escape to web.
       return;
     }
-    handle.update({ score: report.score, label: report.label });
+    handle.update({
+      score: report.score,
+      label: report.label,
+      confidence: report.parse_confidence ?? null,
+    });
   });
 }
 

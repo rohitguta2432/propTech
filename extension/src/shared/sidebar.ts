@@ -169,13 +169,16 @@ export function mountSidebar(
   const body = document.createElement("div");
   body.className = "body";
 
-  // Score card with large badge
+  // Score card with large badge. On a low-confidence parse the badge
+  // primitive renders "— / Not enough data" instead of the (meaningless)
+  // 50/CAUTION verdict the engine emits as a placeholder.
   const scoreCard = document.createElement("div");
   scoreCard.className = "score-card";
   const badge = renderBadge({
     size: "lg",
     score: report.score,
     label: report.label,
+    confidence: report.parse_confidence ?? null,
   });
   scoreCard.appendChild(badge);
   if (report.summary) {

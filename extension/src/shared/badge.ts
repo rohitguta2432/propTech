@@ -12,12 +12,21 @@
  */
 
 import { injectShadowStyles } from "./styles.js";
-import type { ScoreLabel } from "./types.js";
+import type { ParseConfidence, ScoreLabel } from "./types.js";
 
 export interface BadgeOpts {
   size: "sm" | "md" | "lg";
   score: number | null;
   label: ScoreLabel | null;
+  /**
+   * When "low", the badge renders an "incomplete" state — "—" / "?" for the
+   * numeric score and "Not enough data" / "?" for the label. This overrides
+   * the regular score+label rendering even when both are non-null, because
+   * the trust engine emits a neutral score=50 for low-confidence parses
+   * and the badge must not show that as if it were a real verdict.
+   * "high" / "medium" / null / undefined all render the normal score+label.
+   */
+  confidence?: ParseConfidence | null;
   onClick?: (e: MouseEvent) => void;
 }
 
@@ -48,7 +57,14 @@ function labelText(label: ScoreLabel | null): string {
   }
 }
 
-function ariaLabel(score: number | null, label: ScoreLabel | null): string {
+function ariaLabel(
+  score: number | null,
+  label: ScoreLabel | null,
+  confidence: ParseConfidence | null | undefined,
+): string {
+  if (confidence === "low") {
+    return "PropCheck: not enough data to score this listing";
+  }
   if (score == null || label == null) return "PropCheck Trust Score loading";
   return `PropCheck Trust Score ${score} of 100, ${labelText(label)}`;
 }
@@ -86,18 +102,28 @@ export function renderBadge(opts: BadgeOpts): HTMLDivElement {
   root.appendChild(badge);
 
   const apply = (next: BadgeOpts): void => {
-    if (next.score == null || next.label == null) {
+    if (next.confidence === "low") {
+      // Engine refused to commit to a numeric score. Don't render one.
+      delete badge.dataset.loading;
+      delete badge.dataset.label;
+      badge.dataset.confidence = "low";
+      // sm/md sizes can't fit "Not enough data" — use a glyph instead.
+      score.textContent = next.size === "lg" ? "—" : "?";
+      label.textContent = next.size === "lg" ? "Not enough data" : "?";
+    } else if (next.score == null || next.label == null) {
       badge.dataset.loading = "true";
       delete badge.dataset.label;
+      delete badge.dataset.confidence;
       score.textContent = "";
       label.textContent = "";
     } else {
       delete badge.dataset.loading;
+      delete badge.dataset.confidence;
       badge.dataset.label = next.label;
       score.textContent = String(next.score);
       label.textContent = labelText(next.label);
     }
-    badge.setAttribute("aria-label", ariaLabel(next.score, next.label));
+    badge.setAttribute("aria-label", ariaLabel(next.score, next.label, next.confidence));
   };
 
   let click = opts.onClick;
@@ -117,6 +143,8 @@ export function renderBadge(opts: BadgeOpts): HTMLDivElement {
         size: opts.size,
         score: next.score !== undefined ? next.score : opts.score,
         label: next.label !== undefined ? next.label : opts.label,
+        confidence:
+          next.confidence !== undefined ? next.confidence : opts.confidence,
         onClick: opts.onClick,
       };
       if (next.onClick !== undefined) click = next.onClick;

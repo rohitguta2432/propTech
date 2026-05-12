@@ -127,7 +127,11 @@ function showCardBadge(card: HTMLElement, listingUrl: string): void {
   void fetchReport(listingUrl).then((report) => {
     const handle = getBadgeHandle(badge as HTMLDivElement);
     if (!handle || !report) return;
-    handle.update({ score: report.score, label: report.label });
+    handle.update({
+      score: report.score,
+      label: report.label,
+      confidence: report.parse_confidence ?? null,
+    });
   });
 }
 

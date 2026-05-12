@@ -106,8 +106,25 @@ function Hero({
 }
 
 function Report({ report }: { report: CheckResponse }) {
-  const grad = report.label === "safe" ? "grad-safe" : report.label === "caution" ? "grad-amber" : "grad-risky";
-  const txt = report.label === "safe" ? "text-emerald-700" : report.label === "caution" ? "text-amber-700" : "text-red-700";
+  // Low-confidence parse: the trust engine refused to commit to a real
+  // score because too many key fields were missing. Render "Not enough data"
+  // in place of the number — the rest of the report (red flags, checklist,
+  // property block) still flows through and is meaningful.
+  const isLowConfidence = report.parse_confidence === "low";
+  const grad = isLowConfidence
+    ? "bg-cream"
+    : report.label === "safe"
+    ? "grad-safe"
+    : report.label === "caution"
+    ? "grad-amber"
+    : "grad-risky";
+  const txt = isLowConfidence
+    ? "text-ink/70"
+    : report.label === "safe"
+    ? "text-emerald-700"
+    : report.label === "caution"
+    ? "text-amber-700"
+    : "text-red-700";
 
   return (
     <section id="report" className="max-w-4xl mx-auto px-6 py-12">
@@ -115,11 +132,24 @@ function Report({ report }: { report: CheckResponse }) {
         {/* Score banner */}
         <div className={`${grad} px-8 py-10 flex flex-col md:flex-row items-center gap-8`}>
           <div className="rounded-2xl px-8 py-6 flex flex-col items-center justify-center min-w-[180px] bg-white/70 backdrop-blur">
-            <div className={`mono text-7xl font-bold ${txt}`}>{report.score}</div>
-            <div className={`mono text-xs ${txt}`}>/ 100</div>
-            <div className={`mt-3 heading font-bold ${txt} tracking-wide text-sm`}>
-              {report.label.toUpperCase()}
-            </div>
+            {isLowConfidence ? (
+              <>
+                <div className={`heading text-3xl font-bold ${txt} text-center leading-tight`}>
+                  Not enough data
+                </div>
+                <div className={`mono text-[11px] ${txt} mt-3 tracking-wide`}>
+                  COULDN&apos;T SCORE
+                </div>
+              </>
+            ) : (
+              <>
+                <div className={`mono text-7xl font-bold ${txt}`}>{report.score}</div>
+                <div className={`mono text-xs ${txt}`}>/ 100</div>
+                <div className={`mt-3 heading font-bold ${txt} tracking-wide text-sm`}>
+                  {report.label.toUpperCase()}
+                </div>
+              </>
+            )}
           </div>
           <div className="flex-1 text-center md:text-left">
             <div className="heading text-2xl font-bold text-ink">{report.summary}</div>

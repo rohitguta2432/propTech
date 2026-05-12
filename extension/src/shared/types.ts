@@ -31,6 +31,8 @@ export interface PropertyInfo {
   listed_at: string | null;
 }
 
+export type ParseConfidence = "high" | "medium" | "low";
+
 export interface Verifications {
   rera: { status: string } | null;
   image_match_count: number | null;
@@ -38,6 +40,7 @@ export interface Verifications {
   price_delta_pct: number | null;
   listing_age_days: number | null;
   builder_open_complaints: number | null;
+  parse_confidence?: ParseConfidence | null;
 }
 
 export interface CheckResponse {
@@ -52,6 +55,9 @@ export interface CheckResponse {
   verifications: Verifications;
   checked_at: string;
   cache_hit: boolean;
+  // When "low", the engine refused to commit to a real numeric score —
+  // surfaces should render "Not enough data" instead of the score value.
+  parse_confidence?: ParseConfidence | null;
 }
 
 export type ScoreLabel = CheckResponse["label"];
