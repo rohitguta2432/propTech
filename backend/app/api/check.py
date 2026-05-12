@@ -1,10 +1,17 @@
 """POST /v1/check — submit a property listing URL for trust evaluation.
+GET /v1/checks/{id} — fetch a previously-run report by id (public, indexable).
 
 Day 5–7 wired up:
 - URL parser detects portal + listing_id (Day 4).
 - Scraper fetches the live listing HTML (Day 5).
 - Trust engine runs RERA + price-deviation + listing-age signals (Day 7).
 - Persist every check + 24h cache (Day 4 + Day 10 light version).
+
+The GET endpoint exists so the website can render permanent
+`/check/<id>` pages that are crawlable by Google + shareable on
+WhatsApp — every check becomes an SEO landing page for its own
+listing without us writing one. Public read, rate-limited the same
+way as anonymous POST.
 """
 import asyncio
 from datetime import UTC, datetime
@@ -122,6 +129,74 @@ async def submit_check(
         db.rollback()
 
     return report
+
+
+@router.get("/checks/recent")
+@limiter.limit("30/minute", cost=cost_func)
+async def list_recent_checks(
+    request: Request,
+    limit: int = 200,
+    db: Session = Depends(get_db),
+) -> dict[str, object]:
+    """List recent check ids for sitemap generation.
+
+    Read-only, public. Returns at most 500 ids. The frontend's
+    `sitemap.ts` calls this at build / revalidate time so every
+    indexable `/check/<id>` page makes it into sitemap.xml without
+    a database connection from the Next.js side.
+    """
+    limit = max(1, min(500, limit))
+    rows = (
+        db.query(Check.id, Check.checked_at)
+        .order_by(Check.checked_at.desc())
+        .limit(limit)
+        .all()
+    )
+    return {
+        "items": [
+            {"id": r.id, "checked_at": r.checked_at.isoformat() if r.checked_at else None}
+            for r in rows
+        ],
+        "count": len(rows),
+    }
+
+
+@router.get("/checks/{check_id}", response_model=CheckResponse)
+@limiter.limit("60/minute", cost=cost_func)
+async def get_check(
+    check_id: str,
+    request: Request,
+    db: Session = Depends(get_db),
+) -> CheckResponse:
+    """Fetch a stored report by id.
+
+    Public — no auth. Used by the website's permanent `/check/<id>` route
+    and by the Chrome extension's "See full report" CTA. The response is
+    the same `CheckResponse` produced by POST /v1/check; clients render
+    it identically. Returns 404 if the id doesn't exist.
+    """
+    # check_id is a short token; bound the lookup so a 100-character path
+    # can never become an expensive scan.
+    if not check_id or len(check_id) > 64:
+        raise HTTPException(
+            status_code=404,
+            detail={"code": "CHECK_NOT_FOUND", "message": "Report not found."},
+        )
+
+    row = db.query(Check).filter(Check.id == check_id).first()
+    if row is None:
+        raise HTTPException(
+            status_code=404,
+            detail={"code": "CHECK_NOT_FOUND", "message": "Report not found."},
+        )
+
+    # cache_hit is meaningful only for the POST flow (was this an
+    # under-24h re-check?). On a GET we're always reading from the row,
+    # so it's always "cached" by definition — but we expose it as False
+    # to avoid confusing the same field's POST semantics. The frontend
+    # uses `checked_at` for the freshness line, which is what actually
+    # matters to the reader.
+    return _row_to_response(row, cache_hit=False)
 
 
 # ------------------ helpers ------------------

@@ -74,6 +74,31 @@ export async function submitCheck(url: string): Promise<CheckResponse> {
   return (await res.json()) as CheckResponse;
 }
 
+/**
+ * Server-side fetch of a saved report by id. Used by /check/[id] to render
+ * the permanent, indexable view of a check. Returns null on 404 so the
+ * page can call notFound() — every other error rethrows so Next.js
+ * reports a 500.
+ */
+export async function getCheckById(id: string): Promise<CheckResponse | null> {
+  const res = await fetch(`${API_BASE}/v1/checks/${encodeURIComponent(id)}`, {
+    // ISR-friendly: re-fetch at most every 5 minutes. A check is mostly
+    // immutable but the cache_hit / age display benefits from a periodic refresh.
+    next: { revalidate: 300 },
+  });
+  if (res.status === 404) return null;
+  if (!res.ok) {
+    let detail: unknown = null;
+    try {
+      detail = await res.json();
+    } catch {
+      detail = await res.text();
+    }
+    throw new ApiError(res.status, detail);
+  }
+  return (await res.json()) as CheckResponse;
+}
+
 export class ApiError extends Error {
   status: number;
   detail: unknown;
