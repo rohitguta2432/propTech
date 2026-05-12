@@ -130,20 +130,46 @@ async def enrich(
     *,
     client: httpx.AsyncClient | None = None,
     timeout_s: float = 6.0,
+    supplemental: str | None = None,
 ) -> ScrapedListing:
     """Try to fill in fields the regex parser missed, using an LLM.
 
     Always returns a ScrapedListing — never raises. Set `OPENROUTER_API_KEY`
     in env to enable; otherwise this is a no-op.
+
+    `supplemental` is an optional text blob produced by
+    `app.integrations.enrichment_fanout` containing whatever public signals
+    we could collect when the portal HTML was a shell — URL slug fields,
+    OG tags, SERP snippets, Wayback excerpts. When provided, the LLM sees
+    BOTH the HTML and the supplemental blob; the regex-wins merge rule is
+    unchanged so this can only ever fill holes.
     """
     if not settings.openrouter_api_key:
         return listing
     if not _needs_llm_help(listing):
         return listing
-    if not html:
+    if not html and not supplemental:
         return listing
 
-    prompt = _PROMPT + _trim_html(html)
+    prompt_body = _trim_html(html) if html else ""
+    if supplemental:
+        # Cap the supplemental blob so a chatty fanout doesn't blow the budget.
+        # _MAX_HTML_CHARS is the per-blob ceiling; we let supplemental take
+        # an additional half-budget on top of trimmed HTML.
+        supp = supplemental[: _MAX_HTML_CHARS // 2]
+        if prompt_body:
+            prompt_body = (
+                "<!-- DIRECT HTML (may be empty / SPA shell) -->\n"
+                + prompt_body
+                + "\n\n<!-- SUPPLEMENTAL SIGNALS (extract from these when HTML is bare) -->\n"
+                + supp
+            )
+        else:
+            prompt_body = (
+                "<!-- SUPPLEMENTAL SIGNALS (HTML was empty or blocked) -->\n" + supp
+            )
+
+    prompt = _PROMPT + prompt_body
     payload = {
         "model": settings.openrouter_model,
         "messages": [

@@ -146,6 +146,15 @@ def _ensure_utc(dt: datetime) -> datetime:
 
 
 def _row_to_response(row: Check, cache_hit: bool) -> CheckResponse:
+    # parse_confidence lives inside the JSONB `verifications` column so it
+    # survives a cache round-trip without a schema migration. Surface it
+    # at the top level of the response too for ergonomic frontend access.
+    verifications = row.verifications or {}
+    parse_confidence = (
+        verifications.get("parse_confidence")
+        if isinstance(verifications, dict)
+        else None
+    )
     return CheckResponse.model_validate({
         "id": row.id,
         "score": row.score,
@@ -155,9 +164,10 @@ def _row_to_response(row: Check, cache_hit: bool) -> CheckResponse:
         "red_flags": row.red_flags,
         "green_flags": row.green_flags,
         "checklist": row.checklist,
-        "verifications": row.verifications,
+        "verifications": verifications,
         "checked_at": row.checked_at,
         "cache_hit": cache_hit,
+        "parse_confidence": parse_confidence,
     })
 
 

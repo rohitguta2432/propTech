@@ -17,6 +17,7 @@ from app.scrapers.base import (
     DEFAULT_HEADERS,
     DEFAULT_TIMEOUT_S,
     ScrapedListing,
+    apply_post_fetch_enrichment,
 )
 from app.scrapers.router import register
 
@@ -165,36 +166,38 @@ class NinetyNineAcresScraper:
                 response.raise_for_status()
                 html = response.text
         except httpx.TimeoutException as exc:
-            return ScrapedListing(
+            listing = ScrapedListing(
                 portal=self.portal,
                 listing_id=listing_id,
                 url=url,
                 fetch_error=f"timeout: {exc!s}",
             )
+            return await apply_post_fetch_enrichment(listing, "", url)
         except httpx.HTTPError as exc:
-            return ScrapedListing(
+            listing = ScrapedListing(
                 portal=self.portal,
                 listing_id=listing_id,
                 url=url,
                 fetch_error=f"http_error: {exc!s}",
             )
+            return await apply_post_fetch_enrichment(listing, "", url)
         except Exception as exc:  # pragma: no cover - defensive
-            return ScrapedListing(
+            listing = ScrapedListing(
                 portal=self.portal,
                 listing_id=listing_id,
                 url=url,
                 fetch_error=f"error: {exc!s}",
             )
+            return await apply_post_fetch_enrichment(listing, "", url)
 
         listing = self._parse(html, url, listing_id)
 
-        # LLM fallback (Gemma 4 31B via OpenRouter free tier) when regex left
-        # key fields blank. No-op if OPENROUTER_API_KEY is unset.
+        # Full post-fetch pipeline: LLM on HTML, then fanout enrichment if the
+        # page didn't yield enough fields. Confidence is stamped on the way out.
         try:
-            from app.integrations import llm_parser
-
-            listing = await llm_parser.enrich(html, listing)
+            listing = await apply_post_fetch_enrichment(listing, html, url)
         except Exception:
+            # Enrichment must never break the scrape path.
             pass
 
         return listing

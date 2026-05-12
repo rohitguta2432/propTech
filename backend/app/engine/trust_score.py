@@ -43,6 +43,13 @@ async def compute_score(
     db: Session,
 ) -> CheckResponse:
     """Run signals against a scraped listing, return a full response."""
+    # Low-confidence parse: every signal below this point is unreliable
+    # (a "price 22% below market" claim is meaningless when we don't know
+    # the real price). Refuse to commit to a real score; return a neutral
+    # response that the surfaces can render as "Not enough data".
+    if listing.parse_confidence == "low":
+        return _data_incomplete_response(listing)
+
     flags: list[Flag] = []
     base = 100
 
@@ -157,6 +164,8 @@ async def compute_score(
     summary = _build_summary(score, red_flags, green_flags)
     checklist = _checklist(rera_status)
 
+    parse_confidence = listing.parse_confidence  # may be "high", "medium", or None
+
     return CheckResponse(
         id=f"chk_{secrets.token_hex(4)}",
         score=score,
@@ -186,9 +195,11 @@ async def compute_score(
             price_delta_pct=price_delta_pct,
             listing_age_days=listing_age_days,
             builder_open_complaints=None,
+            parse_confidence=parse_confidence,  # type: ignore[arg-type]
         ),
         checked_at=datetime.now(UTC),
         cache_hit=False,
+        parse_confidence=parse_confidence,  # type: ignore[arg-type]
     )
 
 
@@ -232,6 +243,81 @@ def _checklist(rera_status: str) -> list[str]:
     if rera_status in ("MISMATCH", "NOT_FOUND", "NOT_PROVIDED"):
         items.insert(0, "Demand the original RERA registration certificate before any payment")
     return items
+
+
+# ---------------- low-confidence short-circuit ----------------
+
+
+_DATA_INCOMPLETE_CHECKLIST: tuple[str, ...] = (
+    "We couldn't read enough fields from this listing to score it reliably.",
+    "Open the listing in your browser and verify the price, BHK, and locality match what you expect.",
+    "Demand the original RERA registration certificate before any payment.",
+    "Visit the property in person before paying any token.",
+    "Ask for the sale deed and verify property tax record at the municipal portal.",
+    "Never pay token over UPI to a personal account.",
+)
+
+
+def _data_incomplete_response(listing: ScrapedListing) -> CheckResponse:
+    """Return a deliberately-neutral response when the parse is unreliable.
+
+    Surfaces (web, extension, WhatsApp) should detect `parse_confidence == "low"`
+    and render "Not enough data" in place of the numeric score. The score
+    field is kept at the neutral midpoint (50) so the existing schema's
+    `0..100` constraint is respected without claiming the listing is safe
+    OR risky.
+    """
+    flag = _flag(
+        code="DATA_INCOMPLETE",
+        label="Not enough data to score",
+        description=(
+            "The portal returned an empty / blocked page and the public "
+            "fallbacks (URL slug, Open Graph, search snippet, archived "
+            "snapshot) didn't yield enough fields either. Re-run the check "
+            "in a few minutes, or paste the listing's text into the web tool."
+        ),
+        severity="medium",
+        source="PropCheck parse confidence",
+    )
+
+    return CheckResponse(
+        id=f"chk_{secrets.token_hex(4)}",
+        score=50,
+        label="caution",
+        summary=(
+            "We couldn't read enough of this listing to give a trust score. "
+            "Verify the basics yourself before paying anyone."
+        ),
+        property=PropertyInfo(
+            portal=listing.portal,
+            listing_id=listing.listing_id,
+            title=listing.title,
+            price_inr=listing.price_inr,
+            bhk=listing.bhk,
+            area_sqft=listing.area_sqft,
+            locality=listing.locality,
+            city=listing.city,
+            state=listing.state,
+            rera_id=listing.rera_id,
+            builder_name=listing.builder_name,
+            listed_at=listing.listed_at,
+        ),
+        red_flags=[flag],
+        green_flags=[],
+        checklist=list(_DATA_INCOMPLETE_CHECKLIST),
+        verifications=Verifications(
+            rera={"status": "NOT_CHECKED"},
+            image_match_count=None,
+            locality_avg_price_per_sqft=None,
+            price_delta_pct=None,
+            listing_age_days=None,
+            builder_open_complaints=None,
+            parse_confidence="low",
+        ),
+        checked_at=datetime.now(UTC),
+        cache_hit=False,
+        parse_confidence="low",
+    )
 
 
 # ---------------- legacy stub (still used as fallback) ----------------

@@ -215,6 +215,110 @@ async def test_html_is_truncated_before_send():
     assert len(captured["prompt"]) < 14_000
 
 
+@pytest.mark.asyncio
+async def test_supplemental_blob_is_included_in_prompt():
+    """When `supplemental=` is passed, the LLM sees both HTML and the blob."""
+    listing = _empty_listing()
+    captured: dict[str, str] = {}
+
+    def _capture(request: httpx.Request) -> httpx.Response:
+        body = json.loads(request.content)
+        captured["prompt"] = body["messages"][1]["content"]
+        return httpx.Response(
+            200,
+            json={
+                "choices": [
+                    {
+                        "message": {
+                            "content": json.dumps(
+                                {
+                                    "price_inr": 12_000_000,
+                                    "bhk": 3,
+                                    "locality": "Whitefield",
+                                    "city": "Bangalore",
+                                }
+                            )
+                        }
+                    }
+                ]
+            },
+        )
+
+    supplemental = (
+        "<!-- SOURCE: url_slug -->\nLocality (from URL): Whitefield\nBHK (from URL): 3\n\n"
+        "<!-- SOURCE: og_meta -->\nog:title: 3 BHK in Whitefield, Bangalore\n"
+        "og:description: ₹1.2 Cr · 1450 sqft\n"
+    )
+
+    with respx.mock(base_url="https://openrouter.ai/api/v1") as mock, patch.object(
+        llm_parser.settings, "openrouter_api_key", "fake-key"
+    ):
+        mock.post("/chat/completions").mock(side_effect=_capture)
+        out = await llm_parser.enrich(
+            "<html><body>shell</body></html>",
+            listing,
+            supplemental=supplemental,
+        )
+
+    # Both blobs must be visible to the model.
+    assert "DIRECT HTML" in captured["prompt"]
+    assert "SUPPLEMENTAL" in captured["prompt"]
+    assert "Whitefield" in captured["prompt"]
+    assert "og:title" in captured["prompt"]
+
+    # Fields are merged into the listing.
+    assert out.price_inr == 12_000_000
+    assert out.bhk == 3
+    assert out.locality == "Whitefield"
+    assert out.city == "Bangalore"
+
+
+@pytest.mark.asyncio
+async def test_supplemental_works_when_html_is_empty():
+    """When HTML is empty/blocked, the supplemental blob still drives the LLM."""
+    listing = _empty_listing()
+    captured: dict[str, str] = {}
+
+    def _capture(request: httpx.Request) -> httpx.Response:
+        body = json.loads(request.content)
+        captured["prompt"] = body["messages"][1]["content"]
+        return httpx.Response(
+            200,
+            json={
+                "choices": [
+                    {"message": {"content": json.dumps({"price_inr": 8_500_000, "bhk": 2})}}
+                ]
+            },
+        )
+
+    with respx.mock(base_url="https://openrouter.ai/api/v1") as mock, patch.object(
+        llm_parser.settings, "openrouter_api_key", "fake-key"
+    ):
+        mock.post("/chat/completions").mock(side_effect=_capture)
+        out = await llm_parser.enrich(
+            "",
+            listing,
+            supplemental="og:title: 2 BHK in Indiranagar\nog:description: ₹85 Lakh · 1050 sqft",
+        )
+
+    assert "SUPPLEMENTAL" in captured["prompt"]
+    assert "DIRECT HTML" not in captured["prompt"]  # nothing to label
+    assert out.price_inr == 8_500_000
+    assert out.bhk == 2
+
+
+@pytest.mark.asyncio
+async def test_no_op_when_both_html_and_supplemental_empty():
+    """If we have nothing to send, we don't call the API."""
+    listing = _empty_listing()
+    with respx.mock(base_url="https://openrouter.ai/api/v1") as mock, patch.object(
+        llm_parser.settings, "openrouter_api_key", "fake-key"
+    ):
+        # No mock registered → any call would raise. Function must short-circuit.
+        out = await llm_parser.enrich("", listing, supplemental=None)
+    assert out is listing
+
+
 def test_needs_llm_help_thresholds():
     """Function decides when to call the LLM."""
     full = _full_listing()

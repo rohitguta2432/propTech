@@ -18,6 +18,7 @@ from app.scrapers.base import (
     DEFAULT_TIMEOUT_S,
     PortalScraper,
     ScrapedListing,
+    apply_post_fetch_enrichment,
 )
 from app.scrapers.router import register
 
@@ -369,56 +370,58 @@ class MagicbricksScraper:
                 response.raise_for_status()
                 html = response.text
         except httpx.TimeoutException as e:
-            return ScrapedListing(
+            listing = ScrapedListing(
                 portal=self.portal,
                 listing_id=listing_id,
                 url=url,
                 fetch_error=f"timeout: {type(e).__name__}: {e}",
             )
+            return await apply_post_fetch_enrichment(listing, "", url)
         except httpx.HTTPStatusError as e:
-            return ScrapedListing(
+            listing = ScrapedListing(
                 portal=self.portal,
                 listing_id=listing_id,
                 url=url,
                 fetch_error=f"http_status: {e.response.status_code}",
             )
+            return await apply_post_fetch_enrichment(listing, "", url)
         except httpx.HTTPError as e:
-            return ScrapedListing(
+            listing = ScrapedListing(
                 portal=self.portal,
                 listing_id=listing_id,
                 url=url,
                 fetch_error=f"http_error: {type(e).__name__}: {e}",
             )
+            return await apply_post_fetch_enrichment(listing, "", url)
         except Exception as e:
             # Belt-and-braces — scraper must never raise.
-            return ScrapedListing(
+            listing = ScrapedListing(
                 portal=self.portal,
                 listing_id=listing_id,
                 url=url,
                 fetch_error=f"fetch_failed: {type(e).__name__}: {e}",
             )
+            return await apply_post_fetch_enrichment(listing, "", url)
 
         try:
             listing = _parse(html, url, listing_id)
         except Exception as e:
-            return ScrapedListing(
+            listing = ScrapedListing(
                 portal=self.portal,
                 listing_id=listing_id,
                 url=url,
                 fetch_error=f"parse_crashed: {type(e).__name__}: {e}",
                 raw_html_snippet=html[:4096] if html else None,
             )
+            return await apply_post_fetch_enrichment(listing, "", url)
 
-        # If regex left key fields blank, try Gemma 4 31B via OpenRouter.
-        # No-op if OPENROUTER_API_KEY isn't set; never raises.
+        # Run the full enrichment pipeline: LLM on HTML → fanout if gaps
+        # remain → second LLM pass with stitched signals → confidence stamp.
         try:
-            from app.integrations import llm_parser
-
-            listing = await llm_parser.enrich(html, listing)
+            listing = await apply_post_fetch_enrichment(listing, html, url)
         except Exception as e:
-            # LLM fallback must never break the scrape path.
             listing.fetch_error = (
-                listing.fetch_error or f"llm_fallback_skipped: {type(e).__name__}"
+                listing.fetch_error or f"enrichment_failed: {type(e).__name__}"
             )
 
         return listing

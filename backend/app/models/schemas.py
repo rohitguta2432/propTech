@@ -40,6 +40,10 @@ class Verifications(BaseModel):
     price_delta_pct: int | None = None
     listing_age_days: int | None = None
     builder_open_complaints: int | None = None
+    # How much of the underlying listing data we could trust.
+    # Duplicated at the top level of `CheckResponse` for ergonomic access,
+    # stored here so it survives a JSONB cache round-trip.
+    parse_confidence: Literal["high", "medium", "low"] | None = None
 
 
 class CheckResponse(BaseModel):
@@ -54,6 +58,12 @@ class CheckResponse(BaseModel):
     verifications: Verifications
     checked_at: datetime
     cache_hit: bool = False
+    # When "low", the trust engine has refused to commit to a meaningful
+    # numeric score — the surfaces (web, extension, WhatsApp) should
+    # render "Not enough data" rather than the `score` value. The numeric
+    # score is still set (to 50, neutral) so the existing schema constraint
+    # `int 0..100` is preserved without breaking older clients.
+    parse_confidence: Literal["high", "medium", "low"] | None = None
 
 
 # --- Feedback (Sprint 1 Day 12) -----------------------------------------------
