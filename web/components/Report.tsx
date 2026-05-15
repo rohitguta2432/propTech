@@ -1,5 +1,8 @@
+import Link from "next/link";
+
 import type { CheckResponse, Flag } from "../lib/api";
 import { inrFormat } from "../lib/api";
+import { toBuilderSlug } from "../lib/slug";
 
 /**
  * Full trust report card — used on the home page after a fresh check
@@ -81,6 +84,24 @@ export function Report({ report }: { report: CheckResponse }) {
           <div className="mt-2 text-xs text-ink/60">
             Source: {report.property.portal} · Listing ID {report.property.listing_id}
           </div>
+          {report.property.builder_name && (() => {
+            const slug = toBuilderSlug(report.property.builder_name);
+            return slug ? (
+              <div className="mt-2 text-xs text-ink/60">
+                Builder:{" "}
+                <Link
+                  href={`/builder/${slug}`}
+                  className="text-orange hover:text-orange-deep heading font-semibold underline-offset-2 hover:underline"
+                >
+                  {report.property.builder_name}
+                </Link>
+              </div>
+            ) : (
+              <div className="mt-2 text-xs text-ink/60">
+                Builder: {report.property.builder_name}
+              </div>
+            );
+          })()}
         </div>
 
         {/* Red flags */}

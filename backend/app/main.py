@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 
-from app.api import check, feedback, health
+from app.api import builders, check, feedback, health
 from app.config import settings
 from app.middleware.rate_limit import limiter, rate_limit_exception_handler
 
@@ -37,6 +37,7 @@ app.add_middleware(
 # Routers
 app.include_router(health.router, tags=["health"])
 app.include_router(check.router, prefix="/v1", tags=["check"])
+app.include_router(builders.router, prefix="/v1", tags=["builders"])
 app.include_router(feedback.router, prefix="/v1", tags=["feedback"])
 
 

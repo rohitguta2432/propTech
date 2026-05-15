@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-import { API_BASE } from "../lib/api";
+import { API_BASE, getRecentBuilderSlugs } from "../lib/api";
 
 const SITE = "https://propcheck.rohitraj.tech";
 
@@ -41,13 +41,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE}/terms`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
   ];
 
-  const recent = await fetchRecentCheckIds();
+  const [recent, recentBuilders] = await Promise.all([
+    fetchRecentCheckIds(),
+    getRecentBuilderSlugs(),
+  ]);
   const reportPages: MetadataRoute.Sitemap = recent.map((c) => ({
     url: `${SITE}/check/${encodeURIComponent(c.id)}`,
     lastModified: c.checked_at ? new Date(c.checked_at) : now,
     changeFrequency: "monthly",
     priority: 0.6,
   }));
+  const builderPages: MetadataRoute.Sitemap = recentBuilders.map((b) => ({
+    url: `${SITE}/builder/${encodeURIComponent(b.slug)}`,
+    lastModified: b.checked_at ? new Date(b.checked_at) : now,
+    changeFrequency: "weekly",
+    priority: 0.7,
+  }));
 
-  return [...staticPages, ...reportPages];
+  return [...staticPages, ...reportPages, ...builderPages];
 }
